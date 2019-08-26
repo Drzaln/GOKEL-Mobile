@@ -1,12 +1,15 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, StatusBar } from 'react-native'
 
 export class App extends Component {
-  render() {
+  render () {
     return (
-      <View>
-        <Text> Semua Screen ada di screen/ </Text>
-      </View>
+      <>
+        <StatusBar backgroundColor='white' barStyle='dark-content' />
+        <View>
+          <Text> Semua Screen ada di screen/ </Text>
+        </View>
+      </>
     )
   }
 }
