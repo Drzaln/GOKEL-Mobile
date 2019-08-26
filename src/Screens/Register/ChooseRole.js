@@ -20,12 +20,12 @@ export class ChooseRoleScreen extends Component {
           <View>
             <ChooseRole
               aksi={() => alert('kepencet')}
-              gambar={require('../asset/penjual.png')}
+              gambar={require('../../../asset/penjual.png')}
               nama={'PENJUAL'}
             />
             <ChooseRole
               aksi={() => alert('kepencet')}
-              gambar={require('../asset/pembeli.png')}
+              gambar={require('../../../asset/pembeli.png')}
               nama={'PEMBELI'}
             />
           </View>

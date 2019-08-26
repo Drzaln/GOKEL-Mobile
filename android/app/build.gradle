@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.gokil"
+        applicationId "com.gokel"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -1,18 +1,10 @@
-import React, { Component } from 'react'
-import { Text, View, StatusBar } from 'react-native'
-import Registration from './screen/Registration'
+import React from 'react'
+import MainNavigation from './src/Navigation/MainNavigation'
 
-export class App extends Component {
-  render () {
+export default class App extends React.Component {
+  render() {
     return (
-      <>
-        <StatusBar backgroundColor='white' barStyle='dark-content' />
-        <View>
-          <Registration />
-        </View>
-      </>
+      <MainNavigation />
     )
   }
 }
-
-export default App
