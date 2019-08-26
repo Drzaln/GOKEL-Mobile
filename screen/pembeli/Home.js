@@ -14,7 +14,7 @@ export class App extends Component {
   render () {
     const items = [
       { name: 'SAYUR', code: '#1abc9c' },
-      { name: 'BUAH', code: '#2ecc71' },
+      { name: 'MINUMAN', code: '#2ecc71' },
       { name: 'JAJANAN', code: '#3498db' },
       { name: 'MAKANAN', code: '#9b59b6' }
     ]
@@ -113,7 +113,16 @@ export class App extends Component {
               height: '50%'
             }}
           >
-            <Text style={styles.textView}>Kategori</Text>
+            <View style={{ flexDirection: 'row', width: '100%' }}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.textView}>Kategori</Text>
+              </View>
+              <View style={styles.textLihat}>
+                <TouchableOpacity onPress={() => alert('kepencet')}>
+                  <Text style={styles.textLink}>Lihat semua</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
             <FlatGrid
               showsVerticalScrollIndicator={false}
               itemDimension={130}
@@ -190,8 +199,27 @@ const styles = StyleSheet.create({
     paddingLeft: 32,
     marginBottom: 16
   },
+  textLink: {
+    fontFamily: 'Montserrat',
+    fontSize: 15,
+    color: '#004145',
+    marginBottom: 16
+  },
   popularView: {
     backgroundColor: 'white',
     marginBottom: 16
+  },
+  fab: {
+    position: 'absolute',
+    marginRight: 16,
+    marginBottom: 25,
+    right: 0,
+    bottom: 0
+  },
+  textLihat: {
+    flex: 1,
+    alignItems: 'flex-end',
+    paddingRight: 32,
+    justifyContent: 'flex-end'
   }
 })
