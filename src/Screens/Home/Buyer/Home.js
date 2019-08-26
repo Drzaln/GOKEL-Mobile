@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid'
 
-export class App extends Component {
+export class Home extends Component {
   render () {
     const items = [
       { name: 'SAYUR', code: '#1abc9c' },
@@ -43,7 +43,7 @@ export class App extends Component {
                 <Text style={styles.fontBold}>Halo, Nama</Text>
               </View>
               <View>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('Profile')}>
+                <TouchableOpacity onPress={() => alert('kepencet')}>
                   <Image
                     source={{
                       uri: 'https://randomuser.me/api/portraits/men/76.jpg'
@@ -151,7 +151,7 @@ export class App extends Component {
   }
 }
 
-export default App
+export default Home
 
 const styles = StyleSheet.create({
   fontRegular: {
