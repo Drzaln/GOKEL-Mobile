@@ -1,33 +1,14 @@
 import React, { Component } from 'react'
-import {
-  Text,
-  View,
-  StatusBar,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList
-} from 'react-native'
-import { FlatGrid } from 'react-native-super-grid'
+import { Text, View } from 'react-native'
 
 export class App extends Component {
-  render () {
+  render() {
     return (
-      <>
-        <StatusBar
-          translucent
-          backgroundColor='rgba(0, 0, 0, 0.05)'
-          barStyle='dark-content'
-        />
-        <View>
-
-        </View>
-      </>
+      <View>
+        <Text> Semua Screen ada di screen/ </Text>
+      </View>
     )
   }
 }
 
 export default App
-
-const styles = StyleSheet.create({
-})

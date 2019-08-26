@@ -28,6 +28,8 @@ target 'GOKIL' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'GOKILTests' do
     inherit! :search_paths
     # Pods for testing
