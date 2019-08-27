@@ -11,6 +11,7 @@ import ChooseRole from '../Screens/Register/ChooseRole'
 import ProfileBuyer from '../Screens/Profile/Buyer/ProfileBuyer'
 import Payment from '../Screens/Payment/PaymentFInal'
 import EditProfileUser from '../Screens/Profile/Buyer/EditProfileBuyer'
+import EditPrice from "../Screens/Profile/Merchant/EditPriceStock";
 
 const AppNavigator = createStackNavigator({
     HomeBuyer: {
