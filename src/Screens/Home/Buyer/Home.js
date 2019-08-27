@@ -59,7 +59,6 @@ class Home extends Component {
     ]
 
     const list = this.state.data
-    console.warn("list ini", list)
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />

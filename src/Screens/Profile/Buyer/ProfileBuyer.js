@@ -55,8 +55,8 @@ export default class Profile extends Component {
                         <Image style={styles.photo} source={{ uri: `${foto}` }} />
                         <View style={styles.layText}>
                             <Text style={styles.nameUser}>{nama}</Text>
-                            <Text style={styles.role}>{email}</Text>
-                            <Text style={styles.role}>{no_hp}</Text>
+                            <Text style={styles.email}>{email}</Text>
+                            <Text style={styles.hp}>{no_hp}</Text>
                             <Text style={styles.role}>Pembeli</Text>
                         </View>
                     </View>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         elevation: 10
     },
     layText: {
-        marginTop: 20,
+        marginTop: 10,
         marginLeft: 20,
         width: '60%'
     },
@@ -114,9 +114,20 @@ const styles = StyleSheet.create({
         color: '#3e383e',
         fontFamily: 'Montserrat-Bold'
     },
+    email: {
+        fontSize: 16,
+        fontFamily: 'Montserrat-Medium',
+        color: '#333'
+    },
+    hp: {
+        fontSize: 16,
+        fontFamily: 'Montserrat-Medium',
+        color: '#333'
+    },
     role: {
-        fontSize: 18,
-        fontFamily: 'Montserrat-Medium'
+        fontSize: 16,
+        fontFamily: 'Montserrat-Medium',
+        color: '#333'
     },
     butEdit: {
         backgroundColor: '#dcdcdc',
