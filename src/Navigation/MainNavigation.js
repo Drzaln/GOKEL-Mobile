@@ -1,12 +1,14 @@
-import { createStackNavigator, createAppContainer, createSwitchNavigator } from "react-navigation";
+import {
+  createStackNavigator,
+  createAppContainer,
+  createSwitchNavigator
+} from 'react-navigation'
 import IntroSlider from '../Screens/Welcome/Welcome'
 import Login from '../Screens/Login/Login'
-// import Register from '../Screens/Register/Register'
-import Register from '../Screens/Register/MerchantRegistration'
+import RegisterBuyer from '../Screens/Register/RegisterBuyer'
 import HomeBuyer from '../Screens/Home/Buyer/Home'
-// import Profile from '../Screens/Profile/Buyer/ProfileBuyer'
-import Profile from '../Screens/Profile/Merchant/ProfileMerchant'
-import EditPrice from '../Screens/Profile/Merchant/EditPriceStock'
+import ChooseRole from '../Screens/Register/ChooseRole'
+import ProfileBuyer from '../Screens/Profile/Buyer/ProfileBuyer'
 import Payment from '../Screens/Payment/PaymentFInal'
 import EditProfileUser from '../Screens/Profile/Buyer/EditProfileBuyer'
 
@@ -17,8 +19,8 @@ const AppNavigator = createStackNavigator({
             header: null
         }
     },
-    Profile: {
-        screen: Profile,
+    ProfileBuyer: {
+        screen: ProfileBuyer,
     },
     EditProfileUser: {
         screen: EditProfileUser
@@ -34,17 +36,18 @@ const AppNavigator = createStackNavigator({
     },
 });
 
-export default createAppContainer(createSwitchNavigator(
+export default createAppContainer(
+  createSwitchNavigator(
     {
         // SplashScreen: SplashScreen,
         IntroSlider: IntroSlider,
         Login: Login,
-        Register: Register,
-        Home: AppNavigator,
-        Profile: Profile,
-        EditProfileUser: EditProfileUser
+        ChooseRole: ChooseRole,
+        RegisterBuyer: RegisterBuyer,
+        Home: AppNavigator
     },
     {
-        initialRouteName: 'IntroSlider',
+      initialRouteName: 'IntroSlider'
     }
-));
+  )
+)
