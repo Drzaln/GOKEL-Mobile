@@ -25,6 +25,9 @@ const AppNavigator = createStackNavigator({
     EditProfileUser: {
         screen: EditProfileUser
     },
+    EditPrice: {
+        screen: EditPrice
+    },
     Payment: {
         screen: Payment,
         navigationOptions: {
