@@ -11,35 +11,140 @@ import {
   FlatList
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
+import firebase from 'react-native-firebase'
+import {
+  GiftedChat,
+  InputToolbar,
+  Send,
+  Bubble,
+  Time
+} from 'react-native-gifted-chat'
 
 export class Chat extends Component {
-  renderRow = ({ item }) => {
+  constructor (props) {
+    super(props)
+    this.state = {
+      name: 'Siomay Kang Ucay',
+      uid: 1,
+      myuid: 2,
+      myname: 'Jakun',
+      avatar: '',
+      image: 'blabla',
+      textMessage: '',
+      messageList: []
+    }
+  }
+
+  db = firebase.database()
+
+  async componentDidMount () {
+    await this.db
+      .ref('messages')
+      .child(this.state.myuid)
+      .child(this.state.uid)
+      .on('child_added', value => {
+        this.setState(previousState => {
+          return {
+            messageList: GiftedChat.append(
+              previousState.messageList,
+              value.val()
+            )
+          }
+        })
+      })
+  }
+
+  sendMessage = async () => {
+    if (this.state.textMessage.length > 0) {
+      let msgId = this.db
+        .ref('messages')
+        .child(this.state.myuid)
+        .child(this.state.uid)
+        .push().key
+      let updates = {}
+      let message = {
+        _id: msgId,
+        text: this.state.textMessage,
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        user: {
+          _id: this.state.myuid,
+          name: this.state.myname,
+          avatar: this.state.avatar
+        }
+      }
+      updates[
+        'messages/' + this.state.myuid + '/' + this.state.uid + '/' + msgId
+      ] = message
+      updates[
+        'messages/' + this.state.uid + '/' + this.state.myuid + '/' + msgId
+      ] = message
+      this.db.ref().update(updates)
+      this.setState({ textMessage: '' })
+    }
+  }
+
+  inputToolbar = props => {
     return (
-      <View
-        style={{
-          flexDirection: 'row',
-          width: 'auto',
-          alignSelf: item.from === this.state.myid ? 'flex-end' : 'flex-start',
-          backgroundColor:
-            item.from === this.state.myid ? '#003D40' : '#00DAE6',
-          borderRadius: 5,
-          marginBottom: 10
+      <InputToolbar
+        {...props}
+        containerStyle={{
+          borderWidth: 2,
+          borderColor: '#00ADB5',
+          borderRadius: 16,
+          marginHorizontal: 16
+        }}
+      />
+    )
+  }
+
+  sendButton = props => {
+    return (
+      <Send
+        {...props}
+        containerStyle={{
+          borderRadius: 16,
+          borderColor: '#fff',
+          borderWidth: 0,
+          margin: 4
         }}
       >
-        <Text
-          style={{
-            color: item.from === this.state.myid ? '#FFFFFF' : '#000000',
-            padding: 7,
-            fontSize: 16,
-            fontFamily:'Montserrat-Medium'
-          }}
-        >
-          {item.message}
-        </Text>
-        <Text style={{ color: '#eee', padding: 3, fontSize: 12 }}>
-          {this.convertTIme(item.time)}
-        </Text>
-      </View>
+        <Icon size={40} name={'md-send'} style={styles.icon} />
+      </Send>
+    )
+  }
+
+  renderBubble = props => {
+    return (
+      <Bubble
+        {...props}
+        textStyle={{
+          right: {
+            color: '#fff',
+            fontFamily: 'Montserrat-Medium'
+          },
+          left: {
+            color: '#000',
+            fontFamily: 'Montserrat-Medium'
+          }
+        }}
+        wrapperStyle={{
+          left: { backgroundColor: '#00DAE6' },
+          right: { backgroundColor: '#003D40' }
+        }}
+      />
+    )
+  }
+
+  renderTime = props => {
+    return (
+      <Time
+        {...props}
+        textStyle={{
+          left: {
+            color: '#000'
+          }
+        }}
+      />
     )
   }
 
@@ -63,31 +168,25 @@ export class Chat extends Component {
               <Text style={styles.name}>Siomay Kang Ucay</Text>
             </View>
           </View>
-          <FlatList
-            style={{ padding: 10, height: '80%' }}
-            // data={this.state.messageList}
-            renderItem={this.renderRow}
-            keyExtractor={(Item, index) => index.toString()}
-          />
-          <View
-            style={{
-              marginBottom: 400,
-              paddingHorizontal: 16
+          <GiftedChat
+            placeholder='Tulis pesan...'
+            text={this.state.textMessage}
+            messages={this.state.messageList}
+            onSend={this.sendMessage}
+            user={{
+              _id: this.state.myuid,
+              name: this.state.myname,
+              avatar: this.state.avatar
             }}
-          >
-            <View style={styles.viewInput}>
-              <TextInput
-                multiline
-                style={styles.input}
-                // value={this.state.textMessage}
-                placeholder='Tulis Pesan...'
-                // onChangeText={this.handleOnChange('textMessage')}
-              />
-              <TouchableOpacity onPress={() => alert('kepencet')}>
-                <Icon size={40} name={'md-send'} style={styles.icon} />
-              </TouchableOpacity>
-            </View>
-          </View>
+            onInputTextChanged={value => this.setState({ textMessage: value })}
+            isLoadingEarlier
+            isAnimated
+            renderInputToolbar={this.inputToolbar}
+            renderSend={this.sendButton}
+            alwaysShowSend
+            renderBubble={this.renderBubble}
+            renderTime={this.renderTime}
+          />
         </View>
       </>
     )
@@ -103,7 +202,8 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   container: {
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    height: '100%'
   },
   header: {
     height: 65,
@@ -150,7 +250,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     color: '#00ADB5',
-    marginLeft: 16
+    marginRight: 8
   },
   autoText: {
     paddingVertical: 3,
