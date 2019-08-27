@@ -6,12 +6,37 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  AsyncStorage,
   FlatList
 } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid'
+import { connect } from 'react-redux'
+import { getUserPembeli } from '../../../Public/Redux/Action/User'
 
-export class Home extends Component {
-  render () {
+class Home extends Component {
+  constructor() {
+    super()
+    this.state = {
+      name: '',
+      data: []
+    }
+  }
+
+  componentWillMount() {
+    AsyncStorage.getItem('Username', (err, result) => {
+      if (result) {
+        this.setState({ name: result })
+      }
+      this.props.dispatch(getUserPembeli(this.state.name))
+        .then((result) => {
+          this.setState({
+            data: result.value.data.result
+          })
+        })
+
+    })
+  }
+  render() {
     const items = [
       { name: 'SAYUR', code: '#1abc9c' },
       { name: 'MINUMAN', code: '#2ecc71' },
@@ -33,6 +58,8 @@ export class Home extends Component {
       }
     ]
 
+    const list = this.state.data
+    console.warn("list ini", list)
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
@@ -40,17 +67,23 @@ export class Home extends Component {
           <View style={styles.background}>
             <View style={styles.viewNama}>
               <View>
-                <Text style={styles.fontBold}>Halo, Nama</Text>
+                <Text style={styles.fontBold}>Halo, {this.state.name}</Text>
               </View>
               <View>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('ProfileBuyer')}>
-                  <Image
-                    source={{
-                      uri: 'https://randomuser.me/api/portraits/men/76.jpg'
-                    }}
-                    style={styles.profil}
-                  />
-                </TouchableOpacity>
+                {
+                  list.map((item,index) => {
+                    return (
+                      <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('ProfileBuyer', item)}>
+                        <Image
+                          source={{
+                            uri: `${item.foto}`
+                          }}
+                          style={styles.profil}
+                        />
+                      </TouchableOpacity>
+                    )
+                  })
+                }
               </View>
             </View>
           </View>
@@ -151,7 +184,12 @@ export class Home extends Component {
   }
 }
 
-export default Home
+const mapStateToProps = state => {
+  return {
+    dataPembeli: state.user.detailPembeli
+  }
+}
+export default connect(mapStateToProps)(Home)
 
 const styles = StyleSheet.create({
   fontRegular: {

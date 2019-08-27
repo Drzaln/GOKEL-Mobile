@@ -16,6 +16,9 @@ const AppNavigator = createStackNavigator({
     },
     ProfileBuyer: {
         screen: ProfileBuyer,
+        navigationOptions:{
+            header: null
+        }
     },
     Payment: {
         screen: Payment,

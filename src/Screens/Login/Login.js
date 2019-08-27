@@ -34,13 +34,12 @@ class Login extends Component {
             password: password
         }
         await this.props.dispatch(PostLogin(data))
-        AsyncStorage.getItem('Token', (error, result) => {
-            if (result) {
-              alert('Berhasil Login')
-               this.props.navigation.navigate('Home')
-            } else {
-                alert('Terjadi Kesalahan saat Login')
-            }
+        .then((result) => {
+          alert('Berhasil Login, Selamat Datang '+ result.value.data.result.username)
+          this.props.navigation.navigate('Home')
+        })
+        .catch((error)=>{
+          alert("Username & Password tidak cocok",error)
         })
     } else {
         alert('Warning, please insert Data in form')
