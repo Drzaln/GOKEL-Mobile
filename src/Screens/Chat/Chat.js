@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 
-export class Chat extends Component {
+export class App extends Component {
   renderRow = ({ item }) => {
     return (
       <View
@@ -30,7 +30,8 @@ export class Chat extends Component {
           style={{
             color: item.from === this.state.myid ? '#FFFFFF' : '#000000',
             padding: 7,
-            fontSize: 16
+            fontSize: 16,
+            fontFamily:'Montserrat-Medium'
           }}
         >
           {item.message}
@@ -93,7 +94,7 @@ export class Chat extends Component {
   }
 }
 
-export default Chat
+export default App
 
 const styles = StyleSheet.create({
   background: {
