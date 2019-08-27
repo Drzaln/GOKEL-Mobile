@@ -30,7 +30,8 @@ export class Chat extends Component {
           style={{
             color: item.from === this.state.myid ? '#FFFFFF' : '#000000',
             padding: 7,
-            fontSize: 16
+            fontSize: 16,
+            fontFamily:'Montserrat-Medium'
           }}
         >
           {item.message}
