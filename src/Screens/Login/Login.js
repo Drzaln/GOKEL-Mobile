@@ -63,7 +63,7 @@ export default class Login extends Component {
         </View>
         <View>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('Register')}
+            onPress={() => this.props.navigation.navigate('ChooseRoleScreen')}
           >
             <Text style={styles.Text}>
               Tidak punya akun?
