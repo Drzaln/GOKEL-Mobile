@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 
-export class App extends Component {
+export class Chat extends Component {
   renderRow = ({ item }) => {
     return (
       <View
@@ -94,7 +94,7 @@ export class App extends Component {
   }
 }
 
-export default App
+export default Chat
 
 const styles = StyleSheet.create({
   background: {
