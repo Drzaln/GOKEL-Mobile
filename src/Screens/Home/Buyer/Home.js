@@ -43,7 +43,7 @@ export class Home extends Component {
                 <Text style={styles.fontBold}>Halo, Nama</Text>
               </View>
               <View>
-                <TouchableOpacity onPress={() => alert('kepencet')}>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('ProfileBuyer')}>
                   <Image
                     source={{
                       uri: 'https://randomuser.me/api/portraits/men/76.jpg'

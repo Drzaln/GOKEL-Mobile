@@ -10,14 +10,16 @@ import {
   Alert,
   TouchableOpacity
 } from 'react-native'
+import Spinner from 'react-native-loading-spinner-overlay'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { connect} from 'react-redux'
-import { PostRegisterPembeli } from '../../Public/Redux/Action/UserBuyer'
+import { PostRegisterPembeli } from '../../Public/Redux/Action/User'
 
 class Register extends Component {
   constructor(){
     super()
     this.state = {
+      spinner: false,
       email : '',
       nama: '',
       username: '',
@@ -29,13 +31,17 @@ class Register extends Component {
 
   newUserPembeli(data) {
     const {email, nama, username, no_hp, password} = this.state
+    this.setState({
+      spinner: true
+    })
     if(email === '' || nama === '' || username === '' || no_hp === '' || password === ''){
      alert('Lengkapi Form Yang Tersedia!!!')
     } else {
     this.props.dispatch(PostRegisterPembeli(data))
     .then((Response) => {
       this.setState({
-        data: this.props.userBuyer
+        data: this.props.userBuyer,
+        spinner: false
     })
     console.warn("response", Response)
     console.warn('error', this.props)
@@ -53,6 +59,7 @@ class Register extends Component {
       console.warn('error', this.props)
       alert(`Error , Email/Username telah digunakan`)
       this.setState({
+        spinner:false,
         email: '',
         nama:'',
         username: '',
@@ -75,6 +82,11 @@ class Register extends Component {
     }
     return (
       <View style={styles.container}>
+          <Spinner
+            visible={this.state.spinner}
+            textContent={'Loading...'}
+            textStyle={{ color: '#fff' }}
+          />
         <View style={styles.layRegister}>
           <Text style={styles.Register}>DAFTAR</Text>
           <View style={styles.layInput}>
@@ -96,7 +108,6 @@ class Register extends Component {
             <View style={styles.flexRow}>
                 {/* <Icon size={24} name={'md-person'} style={styles.icon} /> */}
                 <TextInput
-                  autoFocus
                   style={styles.input}
                   placeholder='Username'
                   returnKeyType={'next'}
@@ -113,7 +124,6 @@ class Register extends Component {
               <View style={styles.flexRow}>
                 {/* <Icon size={24} name={'md-person'} style={styles.icon} /> */}
                 <TextInput
-                  autoFocus
                   style={styles.input}
                   placeholder='Email'
                   returnKeyType={'next'}
@@ -172,9 +182,10 @@ class Register extends Component {
             </TouchableOpacity>
           </View>
         </View>
-        <View>
+        <View style={{marginTop: 30, height:40}}>
           <TouchableOpacity
-            onPress={() => alert('sudah dipencet')}
+            onPress={() => this.props.navigation.navigate('Login')}
+          style={{ alignItems: 'flex-end', height: 30, marginTop: '30%', marginRight: '10%'}}
           >
             <Text style={styles.Text}>
               Sudah punya akun?
@@ -192,7 +203,7 @@ class Register extends Component {
 
 const mapStateToProps = state => {
   return {
-      userBuyer: state.userBuyer
+      userBuyer: state.user
   };
 };
 
@@ -206,7 +217,6 @@ const styles = StyleSheet.create({
   },
   layRegister: {
     height: '50%',
-    marginTop: '40%',
     justifyContent: 'center'
   },
   Register: {
@@ -255,7 +265,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 16,
     textAlign: 'right',
-    marginRight: '10%',
-    marginTop: 100
   }
 })

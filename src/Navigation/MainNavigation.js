@@ -1,9 +1,10 @@
 import { createStackNavigator, createAppContainer, createSwitchNavigator } from "react-navigation";
 import IntroSlider from '../Screens/Welcome/Welcome'
 import Login from '../Screens/Login/Login'
-import Register from '../Screens/Register/RegisterBuyer'
+import RegisterBuyer from '../Screens/Register/RegisterBuyer'
 import HomeBuyer from '../Screens/Home/Buyer/Home'
-import Profile from '../Screens/Profile/Buyer/ProfileBuyer'
+import ChooseRole from '../Screens/Register/ChooseRole'
+import ProfileBuyer from '../Screens/Profile/Buyer/ProfileBuyer'
 import Payment from '../Screens/Payment/PaymentFInal'
 
 const AppNavigator = createStackNavigator({
@@ -13,8 +14,8 @@ const AppNavigator = createStackNavigator({
             header: null
         }
     },
-    Profile: {
-        screen: Profile,
+    ProfileBuyer: {
+        screen: ProfileBuyer,
     },
     Payment: {
         screen: Payment,
@@ -29,10 +30,11 @@ export default createAppContainer(createSwitchNavigator(
         // SplashScreen: SplashScreen,
         IntroSlider: IntroSlider,
         Login: Login,
-        Register: Register,
+        ChooseRole: ChooseRole,
+        RegisterBuyer: RegisterBuyer,
         Home: AppNavigator
     },
     {
-        initialRouteName: 'Register',
+        initialRouteName: 'IntroSlider',
     }
 ));

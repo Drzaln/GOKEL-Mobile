@@ -24,7 +24,7 @@ export class ChooseRoleScreen extends Component {
               nama={'PENJUAL'}
             />
             <ChooseRole
-              aksi={() => alert('kepencet')}
+              aksi={() => this.props.navigation.navigate('RegisterBuyer')}
               gambar={require('../../../asset/pembeli.png')}
               nama={'PEMBELI'}
             />

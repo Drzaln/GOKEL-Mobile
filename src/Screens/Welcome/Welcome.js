@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, StatusBar } from 'react-native';
+import { StyleSheet, View, Text, Image, StatusBar, AsyncStorage } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 
 const slides = [
@@ -33,7 +33,13 @@ export default class Slider extends React.Component {
             showRealApp: false
         }
     }
-
+    componentWillMount() {
+        AsyncStorage.getItem('Token', (error, result) => {
+            if (result) {
+                this.props.navigation.navigate('Home')
+            }
+        })
+      }
     _renderItem = ({ item }) => {
         return (
             <View style={styles.container} >

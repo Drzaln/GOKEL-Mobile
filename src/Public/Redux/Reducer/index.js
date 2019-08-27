@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import userBuyer from './UserBuyer';
+import user from './User';
 
 const appReducer = combineReducers({
-   userBuyer
+   user
 });
 
 export default appReducer;
