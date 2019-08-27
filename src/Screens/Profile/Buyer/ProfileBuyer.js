@@ -61,6 +61,7 @@ export default class Profile extends Component {
                         </View>
                     </View>
                 </View>
+<<<<<<< HEAD
                 <View style={styles.container}>
                     <View style={styles.layHistory}>
                         <Text style={styles.textHistory}>History</Text>
@@ -70,6 +71,21 @@ export default class Profile extends Component {
                                 <Text style={styles.menu}>Name of Menu</Text>
                                 <Text style={styles.price}>Rp. 9000</Text>
                             </View>
+=======
+                <TouchableOpacity style={styles.butEdit} onPress={()=> this.props.navigation.navigate('EditProfileUser')}>
+                    <Text style={styles.textEdit}>Edit Profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.butLogout} onPress={() =>this.islogout()}>
+                    <Text style={styles.textLogout}>Keluar</Text>
+                </TouchableOpacity>
+                <View style={styles.layHistory}>
+                    <Text style={styles.textHistory}>History</Text>
+                    <View style={styles.layMenu}>
+                        <Text style={styles.number}>1</Text>
+                        <View style={{marginLeft:20}}>
+                            <Text style={styles.menu}>Name of Menu</Text>
+                            <Text style={styles.price}>Rp. 9000</Text>
+>>>>>>> 17bac8f6fd396f1b34152036d9be8bc846473ed4
                         </View>
                     </View>
                 </View>
