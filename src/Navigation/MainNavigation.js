@@ -2,11 +2,13 @@ import { createStackNavigator, createAppContainer, createSwitchNavigator } from 
 import IntroSlider from '../Screens/Welcome/Welcome'
 import Login from '../Screens/Login/Login'
 // import Register from '../Screens/Register/Register'
-import Register from '../../screen/Registration'
+import Register from '../Screens/Register/MerchantRegistration'
 import HomeBuyer from '../Screens/Home/Buyer/Home'
-import Profile from '../Screens/Profile/Buyer/ProfileBuyer'
+// import Profile from '../Screens/Profile/Buyer/ProfileBuyer'
+import Profile from '../Screens/Profile/Merchant/ProfileMerchant'
+import EditPrice from '../Screens/Profile/Merchant/EditPriceStock'
 import Payment from '../Screens/Payment/PaymentFInal'
-import EditProfileUser from '../../screen/EditProfileBuyer'
+import EditProfileUser from '../Screens/Profile/Buyer/EditProfileBuyer'
 
 const AppNavigator = createStackNavigator({
     HomeBuyer: {
@@ -20,6 +22,9 @@ const AppNavigator = createStackNavigator({
     },
     EditProfileUser: {
         screen: EditProfileUser
+    },
+    EditPrice: {
+        screen: EditPrice
     },
     Payment: {
         screen: Payment,
