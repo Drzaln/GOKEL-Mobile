@@ -7,11 +7,54 @@ import {
   Text,
   TextInput,
   StatusBar,
+  AsyncStorage,
   TouchableOpacity
 } from 'react-native'
+import Spinner from 'react-native-loading-spinner-overlay'
 import Icon from 'react-native-vector-icons/Ionicons'
+import { connect} from 'react-redux'
+import {PostLogin } from '../../Public/Redux/Action/User'
 
-export default class Login extends Component {
+class Login extends Component {
+  constructor(){
+    super()
+    this.state = {
+      spinner: false,
+      username: '',
+      password: '',
+      data: []
+    }
+  }
+
+  isLogin = async () => {
+    const { username, password } = this.state
+    if ( username !== '' && password !== '') {
+        let data = {
+            username: username,
+            password: password
+        }
+        await this.props.dispatch(PostLogin(data))
+        AsyncStorage.getItem('Token', (error, result) => {
+            if (result) {
+              alert('Berhasil Login')
+               this.props.navigation.navigate('Home')
+            } else {
+                alert('Terjadi Kesalahan saat Login')
+            }
+        })
+    } else {
+        alert('Warning, please insert Data in form')
+    }
+}
+
+componentWillMount() {
+  AsyncStorage.getItem('Token', (error, result) => {
+      if (result) {
+          this.props.navigation.navigate('Home')
+      }
+  })
+}
+
   render () {
     return (
       <View style={styles.container}>
@@ -30,6 +73,7 @@ export default class Login extends Component {
                   onSubmitEditing={() => {
                     this.secondTextInput.focus()
                   }}
+                  onChangeText={username => this.setState({ username })}
                 />
               </View>
               <View style={styles.flexRow}>
@@ -41,6 +85,7 @@ export default class Login extends Component {
                   ref={input => {
                     this.secondTextInput = input
                   }}
+                  onChangeText={password => this.setState({ password })}
                 />
               </View>
             </View>
@@ -54,16 +99,16 @@ export default class Login extends Component {
           >
             <TouchableOpacity
               style={styles.butLogIn}
-              onPress={() => this.props.navigation.navigate('Home')}
+              onPress={() => this.isLogin()}
             >
               <Text style={styles.textLogIn}>Log In</Text>
               <Icon size={20} name={'md-arrow-forward'} style={styles.icon} />
             </TouchableOpacity>
           </View>
         </View>
-        <View>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('ChooseRoleScreen')}
+            onPress={() => this.props.navigation.navigate('ChooseRole')}
+            style={{alignItems: 'flex-end', marginTop: '10%', marginRight: '10%'}}
           >
             <Text style={styles.Text}>
               Tidak punya akun?
@@ -73,11 +118,17 @@ export default class Login extends Component {
               </Text>
             </Text>
           </TouchableOpacity>
-        </View>
       </View>
     )
   }
 }
+
+const mapStateToProps = state => {
+  return {
+      data: state.user
+  }
+}
+export default connect(mapStateToProps)(Login)
 
 const styles = StyleSheet.create({
   container: {
@@ -86,9 +137,8 @@ const styles = StyleSheet.create({
     alignContent: 'center'
   },
   layLogin: {
-    height: '50%',
-    marginTop: '40%',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    height: '80%'
   },
   Login: {
     fontFamily: 'Montserrat-Bold',
@@ -108,7 +158,8 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   input: {
-    paddingLeft: 10
+    paddingLeft: 10,
+    width: '100%'
   },
   flexRow: {
     flexDirection: 'row',
@@ -136,7 +187,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 16,
     textAlign: 'right',
-    marginRight: '10%',
-    marginTop: 100
   }
 })

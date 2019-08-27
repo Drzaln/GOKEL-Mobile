@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage } from 'react-native'
 
 export default class Profile extends Component {
+
+    islogout = async() => {
+        await AsyncStorage.clear()
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -14,6 +19,9 @@ export default class Profile extends Component {
                 </View>
                 <TouchableOpacity style={styles.butEdit} onPress={()=> this.props.navigation.navigate('EditProfileUser')}>
                     <Text style={styles.textEdit}>Edit Profile</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.butLogout} onPress={() =>this.islogout()}>
+                    <Text style={styles.textLogout}>Keluar</Text>
                 </TouchableOpacity>
                 <View style={styles.layHistory}>
                     <Text style={styles.textHistory}>History</Text>
@@ -69,6 +77,18 @@ const styles = StyleSheet.create({
     textEdit:{
         fontFamily: 'Montserrat-Bold',
         color: '#3e383e',
+        fontSize: 15
+    },
+    butLogout: {
+        backgroundColor:'#eb2323',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 15,
+        marginTop: 10
+    },
+    textLogout:{
+        fontFamily: 'Montserrat-Bold',
+        color: 'white',
         fontSize: 15
     },
     layHistory:{

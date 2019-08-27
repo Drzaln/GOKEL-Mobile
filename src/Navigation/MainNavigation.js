@@ -5,11 +5,10 @@ import {
 } from 'react-navigation'
 import IntroSlider from '../Screens/Welcome/Welcome'
 import Login from '../Screens/Login/Login'
-// import Register from '../Screens/Register/Register'
-import Register from '../../screen/Registration'
+import RegisterBuyer from '../Screens/Register/RegisterBuyer'
 import HomeBuyer from '../Screens/Home/Buyer/Home'
-import HomeMerchant from '../Screens/Home/Merchant/Home'
-import Profile from '../Screens/Profile/Buyer/ProfileBuyer'
+import ChooseRole from '../Screens/Register/ChooseRole'
+import ProfileBuyer from '../Screens/Profile/Buyer/ProfileBuyer'
 import Payment from '../Screens/Payment/PaymentFInal'
 import EditProfileUser from '../../screen/EditProfileBuyer'
 
@@ -20,8 +19,8 @@ const AppNavigator = createStackNavigator({
             header: null
         }
     },
-    Profile: {
-        screen: Profile,
+    ProfileBuyer: {
+        screen: ProfileBuyer,
     },
     EditProfileUser: {
         screen: EditProfileUser
@@ -40,10 +39,9 @@ export default createAppContainer(
         // SplashScreen: SplashScreen,
         IntroSlider: IntroSlider,
         Login: Login,
-        Register: Register,
-        Home: AppNavigator,
-        Profile: Profile,
-        EditProfileUser: EditProfileUser
+        ChooseRole: ChooseRole,
+        RegisterBuyer: RegisterBuyer,
+        Home: AppNavigator
     },
     {
       initialRouteName: 'IntroSlider'

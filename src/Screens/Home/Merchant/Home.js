@@ -37,7 +37,7 @@ export class Home extends Component {
               <Text style={styles.fontSaldo}>Saldo, Rp 20000</Text>
             </View>
             <View>
-              <TouchableOpacity onPress={() => alert('kepencet')}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('ProfileBuyer')}>
                 <Image
                   source={{
                     uri: 'https://randomuser.me/api/portraits/men/76.jpg'
