@@ -12,7 +12,7 @@ export default class Profile extends Component {
                         <Text style={styles.role}>name of Role</Text>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.butEdit}>
+                <TouchableOpacity style={styles.butEdit} onPress={()=> this.props.navigation.navigate('EditProfileUser')}>
                     <Text style={styles.textEdit}>Edit Profile</Text>
                 </TouchableOpacity>
                 <View style={styles.layHistory}>
