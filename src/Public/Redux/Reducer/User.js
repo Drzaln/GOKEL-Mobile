@@ -72,6 +72,26 @@ const user = (state = initialState, action) => {
                 isFulfilled: true,
                 detailPembeli: action.payload.data,
             }
+        case 'PATCH_PEMBELI_PENDING':
+            return {
+                ...state,
+                isLoading: true,
+                isFulfilled: false,
+                isRejected: false,
+            }
+        case 'PATCH_PEMBELII_REJECTED':
+            return {
+                ...state,
+                isLoading: false,
+                isRejected: true,
+            }
+        case 'PATCH_PEMBELI_FULFILLED':
+            return {
+                ...state,
+                isLoading: false,
+                isFulfilled: true,
+                detailPembeli: action.payload.data,
+            }
         default:
             return state
     }
