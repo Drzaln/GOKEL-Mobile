@@ -59,7 +59,6 @@ class Register extends Component {
       console.warn('error', this.props)
       alert(`Error , Email/Username telah digunakan`)
       this.setState({
-        spinner:false,
         email: '',
         nama:'',
         username: '',

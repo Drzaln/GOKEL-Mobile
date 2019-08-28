@@ -12,14 +12,15 @@ import {
 } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import Icon from 'react-native-vector-icons/Ionicons'
-import { connect} from 'react-redux'
-import {PostLogin } from '../../Public/Redux/Action/User'
+import { connect } from 'react-redux'
+import { PostLogin } from '../../Public/Redux/Action/User'
 
 class Login extends Component {
-  constructor(){
+  constructor() {
     super()
     this.state = {
       spinner: false,
+      role: '',
       username: '',
       password: '',
       data: []
@@ -28,33 +29,49 @@ class Login extends Component {
 
   isLogin = async () => {
     const { username, password } = this.state
-    if ( username !== '' && password !== '') {
-        let data = {
-            username: username,
-            password: password
-        }
-        await this.props.dispatch(PostLogin(data))
+    if (username !== '' && password !== '') {
+      let data = {
+        username: username,
+        password: password
+      }
+      await this.props.dispatch(PostLogin(data))
         .then((result) => {
-          alert('Berhasil Login, Selamat Datang '+ result.value.data.result.username)
-          this.props.navigation.navigate('Home')
+          alert('Berhasil Login, Selamat Datang ' + result.value.data.result.username)
+          let role = result.value.data.result.role
+          if (role === 'pembeli') {
+            this.props.navigation.navigate('HomeBuyer')
+          } else if (role === 'pedagang') {
+            this.props.navigation.navigate('HomeSeller')
+          } else {
+            alert("ada kesalah!!! Hubungi penyedia layanan")
+          }
         })
-        .catch((error)=>{
-          alert("Username & Password tidak cocok",error)
+        .catch((error) => {
+          alert("Username & Password tidak cocok", error)
         })
     } else {
-        alert('Warning, please insert Data in form')
+      alert('Warning, please insert Data in form')
     }
-}
+  }
 
-componentWillMount() {
-  AsyncStorage.getItem('Token', (error, result) => {
-      if (result) {
-          this.props.navigation.navigate('Home')
+  componentWillMount() {
+    AsyncStorage.getItem('Role', (error, result) => {
+      console.warn("rolenya", result)
+      if (result === 'pembeli') {
+        this.setState({
+          role: result
+        })
+        this.props.navigation.navigate('HomeBuyer')
+      } else if (result === 'pedagang') {
+        this.setState({
+          role: result
+        })
+        this.props.navigation.navigate('HomeSeller')
       }
-  })
-}
+    })
+  }
 
-  render () {
+  render() {
     return (
       <View style={styles.container}>
         <View style={styles.layLogin}>
@@ -105,18 +122,18 @@ componentWillMount() {
             </TouchableOpacity>
           </View>
         </View>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('ChooseRole')}
-            style={{alignItems: 'flex-end', marginTop: '10%', marginRight: '10%'}}
-          >
-            <Text style={styles.Text}>
-              Tidak punya akun?
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate('ChooseRole')}
+          style={{ alignItems: 'flex-end', marginTop: '10%', marginRight: '10%' }}
+        >
+          <Text style={styles.Text}>
+            Tidak punya akun?
               <Text style={{ fontWeight: 'bold', color: '#00C7D1' }}>
-                {' '}
-                Daftar disini
+              {' '}
+              Daftar disini
               </Text>
-            </Text>
-          </TouchableOpacity>
+          </Text>
+        </TouchableOpacity>
       </View>
     )
   }
@@ -124,7 +141,7 @@ componentWillMount() {
 
 const mapStateToProps = state => {
   return {
-      data: state.user
+    data: state.user
   }
 }
 export default connect(mapStateToProps)(Login)
