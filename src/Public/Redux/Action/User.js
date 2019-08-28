@@ -28,3 +28,10 @@ export const getUserPembeli = (username) => {
         payload: axios.get(`${api}pembeli/${username}`)
     }
 }
+
+export const updateUserPembeli = (username, input) => {
+    return {
+        type: 'PATCH_PEMBELI',
+        payload: axios.patch(`${api}pembeli/${username}`, input)
+    }
+}
