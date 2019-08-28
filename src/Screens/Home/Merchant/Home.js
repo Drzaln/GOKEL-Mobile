@@ -11,15 +11,24 @@ import {
 import { FAB } from 'react-native-paper'
 import Modal from 'react-native-modal'
 
-export class Home extends Component {
+export class App extends Component {
   constructor (props) {
     super(props)
     this.state = {
       harga: '',
       porsi: '',
-      saldo: '',
+      saldo: 2000,
+      saldoBaru: 0,
       saldoTampil: 0
     }
+  }
+
+  componentDidMount () {
+    const saldoTotal = Number(this.state.saldo) + Number(this.state.saldoBaru)
+
+    this.setState({
+      saldoTampil: saldoTotal
+    })
   }
 
   state = {
@@ -49,8 +58,11 @@ export class Home extends Component {
   }
 
   submitSaldo = () => {
+    const saldoTotal = Number(this.state.saldo) + Number(this.state.saldoBaru)
+    console.warn(`saldo total`, saldoTotal)
+
     this.setState({
-      saldoTampil: this.state.saldo,
+      saldoTampil: saldoTotal,
       isModalVisible: !this.state.isModalVisible
     })
   }
@@ -168,7 +180,7 @@ export class Home extends Component {
                     autoFocus
                     style={styles.inputText}
                     blurOnSubmit={false}
-                    onChangeText={saldo => this.setState({ saldo })}
+                    onChangeText={saldoBaru => this.setState({ saldoBaru }) }
                     onSubmitEditing={() => this.submitSaldo()}
                     returnKeyType={'done'}
                     keyboardType='number-pad'
@@ -191,7 +203,7 @@ export class Home extends Component {
   }
 }
 
-export default Home
+export default App
 
 const styles = StyleSheet.create({
   fontSaldo: {
