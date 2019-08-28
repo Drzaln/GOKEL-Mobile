@@ -218,8 +218,8 @@ class Register extends Component {
                   <Picker.Item label="Pilih Kategori" value="0" />
                   <Picker.Item label="Makanan" value="1" />
                   <Picker.Item label="Minuman" value="2" />
-                  <Picker.Item label="Sayur" value="3" />
-                  <Picker.Item label="Snack" value="4" />
+                  <Picker.Item label="Snack" value="3" />
+                  <Picker.Item label="Sayur" value="4" />
                 </Picker>
               </View>
                 {
@@ -233,8 +233,11 @@ class Register extends Component {
                         this.setState({ idJajan: Value })
                       }>
                         <Picker.Item label="Pilih Macam-macam Makanan" value="0" />
-                     <Picker.Item label="Siomay" value="1" />
-                     <Picker.Item label="Bakso" value="2" />
+                     <Picker.Item label="Bakso" value="1" />
+                     <Picker.Item label="Mie Ayam" value="2" />
+                     <Picker.Item label="Bubur Ayam" value="3" />
+                     <Picker.Item label="Nasi Goreng" value="4" />
+                     <Picker.Item label="Sate" value="14" />
                     </Picker>
                     </View>
                     :  
@@ -248,8 +251,41 @@ class Register extends Component {
                       this.setState({ idJajan: Value })
                     }>
                       <Picker.Item label="Pilih Macam-macam Minuman" value="0" />
-                    <Picker.Item label="Es Dung-dung" value="1" />
-                    <Picker.Item label="Es Doger" value="2" />
+                    <Picker.Item label="Es Dungdung" value="5" />
+                    <Picker.Item label="Es Doger" value="6" />
+                    <Picker.Item label="Es Kelapa" value="7" />
+                    <Picker.Item label="Es Dawet" value="8" />
+                  </Picker>
+                  </View>
+                  :
+                  this.state.idCat === '3'
+                    ?
+                    <View style={styles.flexRow}>
+                    <Picker
+                    selectedValue={idJajan}
+                    style={{ height: 50, width: 300 }}
+                    onValueChange={(Value, itemIndex) =>
+                      this.setState({ idJajan: Value })
+                    }>
+                      <Picker.Item label="Pilih Macam-macam Snack" value="0" />
+                    <Picker.Item label="Pentol" value="9" />
+                    <Picker.Item label="Tahu Bulat" value="10" />
+                    <Picker.Item label="Siomay" value="11" />
+                    <Picker.Item label="Roti" value="12" />
+                  </Picker>
+                  </View>
+                  :
+                  this.state.idCat === '4'
+                    ?
+                    <View style={styles.flexRow}>
+                    <Picker
+                    selectedValue={idJajan}
+                    style={{ height: 50, width: 300 }}
+                    onValueChange={(Value, itemIndex) =>
+                      this.setState({ idJajan: Value })
+                    }>
+                      <Picker.Item label="Pilih Macam-macam Sayur" value="0" />
+                    <Picker.Item label="Sayur" value="13" />
                   </Picker>
                   </View>
                   :

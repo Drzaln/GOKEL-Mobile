@@ -7,23 +7,18 @@ import IntroSlider from '../Screens/Welcome/Welcome'
 import Login from '../Screens/Login/Login'
 import RegisterBuyer from '../Screens/Register/RegisterBuyer'
 import RegisterSeller from '../Screens/Register/MerchantRegistration'
-import HomeBuyer from '../Screens/Home/Buyer/Home'
-import HomeSeller from '../Screens/Home/Merchant/Home'
+import HomeBuy from '../Screens/Home/Buyer/Home'
+import HomeSell from '../Screens/Home/Merchant/Home'
 import ChooseRole from '../Screens/Register/ChooseRole'
 import ProfileBuyer from '../Screens/Profile/Buyer/ProfileBuyer'
+import ProfileSeller from '../Screens/Profile/Merchant/EditProfileMerchant'
 import Payment from '../Screens/Payment/PaymentFInal'
 import EditProfileUser from '../Screens/Profile/Buyer/EditProfileBuyer'
 import EditPrice from "../Screens/Profile/Merchant/EditPriceStock";
 
-const AppNavigator = createStackNavigator({
-    HomeBuyer: {
-        screen: HomeBuyer,
-        navigationOptions: {
-            header: null
-        }
-    },
-    HomeSeller: {
-        screen: HomeSeller,
+const BuyerNavigator = createStackNavigator({
+    HomeBuy: {
+        screen: HomeBuy,
         navigationOptions: {
             header: null
         }
@@ -40,12 +35,6 @@ const AppNavigator = createStackNavigator({
             title: 'Edit Profile'
         }
     },
-    EditPrice: {
-        screen: EditPrice,
-        navigationOptions:{
-            title: 'Edit Harga'
-        }
-    },
     Payment: {
         screen: Payment,
         navigationOptions: {
@@ -53,6 +42,28 @@ const AppNavigator = createStackNavigator({
         }
     },
 });
+
+const SellerNavigator = createStackNavigator({
+    HomeSell: {
+        screen: HomeSell,
+        navigationOptions: {
+            header: null
+        }
+    },
+    EditPrice: {
+        screen: EditPrice,
+        navigationOptions:{
+            title: 'Edit Harga'
+        }
+    },
+    ProfileSeller: {
+        screen: ProfileSeller,
+        navigationOptions:{
+            header: null
+        }
+    },
+    
+})
 
 export default createAppContainer(
   createSwitchNavigator(
@@ -63,11 +74,11 @@ export default createAppContainer(
         ChooseRole: ChooseRole,
         RegisterBuyer: RegisterBuyer,
         RegisterSeller: RegisterSeller,
-        Home: AppNavigator,
-        HomeSeller: HomeSeller
+        HomeBuyer: BuyerNavigator,
+        HomeSeller: SellerNavigator
     },
     {
-      initialRouteName: 'RegisterSeller'
+      initialRouteName: 'IntroSlider'
     }
   )
 )
