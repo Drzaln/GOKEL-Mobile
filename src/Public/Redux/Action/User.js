@@ -8,6 +8,13 @@ export const PostRegisterPembeli = (data) => {
     }
 }
 
+export const PostRegisterPedagang = (data) => {
+    return {
+        type: 'POST_REGIST_PEDAGANG',
+        payload: axios.post(`${api}register/pedagang`, data)
+    }
+}
+
 export const PostLogin = (data) => {
     return {
         type: 'POST_LOGIN',

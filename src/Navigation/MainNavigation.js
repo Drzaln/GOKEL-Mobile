@@ -7,6 +7,7 @@ import IntroSlider from '../Screens/Welcome/Welcome'
 import Login from '../Screens/Login/Login'
 import RegisterBuyer from '../Screens/Register/RegisterBuyer'
 import HomeBuyer from '../Screens/Home/Buyer/Home'
+import HomeSeller from '../Screens/Home/Merchant/Home'
 import ChooseRole from '../Screens/Register/ChooseRole'
 import ProfileBuyer from '../Screens/Profile/Buyer/ProfileBuyer'
 import Payment from '../Screens/Payment/PaymentFInal'
@@ -20,6 +21,12 @@ const AppNavigator = createStackNavigator({
             header: null
         }
     },
+    HomeSeller: {
+        screen: HomeSeller,
+        navigationOptions: {
+            header: null
+        }
+    },
     ProfileBuyer: {
         screen: ProfileBuyer,
         navigationOptions:{
@@ -27,10 +34,16 @@ const AppNavigator = createStackNavigator({
         }
     },
     EditProfileUser: {
-        screen: EditProfileUser
+        screen: EditProfileUser,
+        navigationOptions:{
+            title: 'Edit Profile'
+        }
     },
     EditPrice: {
-        screen: EditPrice
+        screen: EditPrice,
+        navigationOptions:{
+            title: 'Edit Harga'
+        }
     },
     Payment: {
         screen: Payment,
@@ -44,14 +57,16 @@ export default createAppContainer(
   createSwitchNavigator(
     {
         // SplashScreen: SplashScreen,
-        IntroSlider: IntroSlider,
+        IntroSlider: IntroSlider,                               
         Login: Login,
         ChooseRole: ChooseRole,
         RegisterBuyer: RegisterBuyer,
-        Home: AppNavigator
+        Home: AppNavigator,
+        HomeSeller: HomeSeller
     },
     {
       initialRouteName: 'IntroSlider'
     }
   )
 )
+

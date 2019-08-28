@@ -71,6 +71,7 @@ class Home extends Component {
               <View>
                 {
                   list.map((item,index) => {
+                    console.warn("item", item)
                     return (
                       <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('ProfileBuyer', item)}>
                         <Image

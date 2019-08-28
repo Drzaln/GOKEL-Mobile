@@ -24,6 +24,10 @@ export default class Profile extends Component {
         this._menu.show();
     };
 
+    hideMenu = () => {
+        this._menu.hide();
+      };
+
     islogout(){
          AsyncStorage.clear()
         alert('Berhasil Keluar')
@@ -46,8 +50,8 @@ export default class Profile extends Component {
                      ref={this.setMenuRef}
                      button={<Icon size={34} onPress={this.showMenu} name={'md-more'} style={styles.icon} />}
                     >
-                   <MenuItem onPress={() => alert('Edit belum siap')}>Edit</MenuItem>
-                   <MenuItem onPress={() => this.islogout()}>Logout</MenuItem>
+                   <MenuItem onPress={() => this.props.navigation.navigate('EditProfileUser')&&this.hideMenu()}>Edit</MenuItem>
+                   <MenuItem onPress={() => this.islogout() &&this.hideMenu()}>Logout</MenuItem>
                     </Menu>
                     </View>
                     </View>
@@ -57,16 +61,9 @@ export default class Profile extends Component {
                             <Text style={styles.nameUser}>{nama}</Text>
                             <Text style={styles.email}>{email}</Text>
                             <Text style={styles.hp}>{no_hp}</Text>
-                            <Text style={styles.role}>Pembeli</Text>
                         </View>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.butEdit} onPress={()=> this.props.navigation.navigate('EditProfileUser')}>
-                    <Text style={styles.textEdit}>Edit Profile</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.butLogout} onPress={() =>this.islogout()}>
-                    <Text style={styles.textLogout}>Keluar</Text>
-                </TouchableOpacity>
                 <View style={styles.layHistory}>
                     <Text style={styles.textHistory}>History</Text>
                     <View style={styles.layMenu}>
@@ -158,7 +155,8 @@ const styles = StyleSheet.create({
         fontSize: 15
     },
     layHistory: {
-        marginTop: 50
+        marginTop: 50,
+        marginHorizontal: '10%'
     },
     textHistory: {
         fontFamily: 'Montserrat-Bold',
