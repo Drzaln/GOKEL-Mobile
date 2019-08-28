@@ -52,6 +52,26 @@ const user = (state = initialState, action) => {
                 isFulfilled: true,
                 userList: action.payload.data,
             }
+        case 'GET_PEMBELI_PENDING':
+            return {
+                ...state,
+                isLoading: true,
+                isFulfilled: false,
+                isRejected: false,
+            }
+        case 'GET_PEMBELII_REJECTED':
+            return {
+                ...state,
+                isLoading: false,
+                isRejected: true,
+            }
+        case 'GET_PEMBELI_FULFILLED':
+            return {
+                ...state,
+                isLoading: false,
+                isFulfilled: true,
+                detailPembeli: action.payload.data,
+            }
         default:
             return state
     }

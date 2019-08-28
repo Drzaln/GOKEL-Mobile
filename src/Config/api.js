@@ -1,0 +1,1 @@
+export default 'https://gokel-251109.appspot.com/user/';
