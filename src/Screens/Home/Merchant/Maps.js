@@ -8,30 +8,9 @@ import {
   StyleSheet
 } from 'react-native'
 import { FAB } from 'react-native-paper'
-import Modal from 'react-native-modal'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
 export class Maps extends Component {
-  state = {
-    isModalVisible: false
-  }
-
-  toggleModal = () => {
-    this.setState({ isModalVisible: !this.state.isModalVisible })
-  }
-
-  handleScrollTo = p => {
-    if (this.scrollViewRef) {
-      this.scrollViewRef.scrollTo(p)
-    }
-  }
-
-  handleOnScroll = event => {
-    this.setState({
-      scrollOffset: event.nativeEvent.contentOffset.y
-    })
-  }
-
   render () {
     return (
       <>
@@ -57,58 +36,12 @@ export class Maps extends Component {
             }}
           >
             <Marker
-              onPress={() => this.toggleModal()}
               coordinate={{
                 latitude: 37.78825,
                 longitude: -122.4324
               }}
             />
           </MapView>
-          <Modal
-            onSwipeComplete={() => this.toggleModal()}
-            onBackdropPress={() => this.toggleModal()}
-            isVisible={this.state.isModalVisible}
-            swipeDirection='down'
-            scrollTo={this.handleScrollTo}
-            scrollOffset={this.state.scrollOffset}
-            scrollOffsetMax={400 - 300}
-            backdropOpacity={0.3}
-            style={styles.bottomModal}
-          >
-            <View style={styles.scrollableModal}>
-              <View style={{ height: '15%' }} />
-              <View style={styles.scrollableModalContent1}>
-                <View style={{ flexDirection: 'row' }}>
-                  <View style={{ marginRight: 16 }}>
-                    <Image
-                      source={{
-                        uri: 'https://randomuser.me/api/portraits/men/76.jpg'
-                      }}
-                      style={styles.profil}
-                    />
-                  </View>
-                  <View style={{ flex: 2 }}>
-                    <Text style={styles.fontNama}>Siomay Kang Ujay</Text>
-                    <Text style={styles.fontPorsi}>Sisa ± 30 Porsi </Text>
-                    <Text style={styles.fontHarga}>Rp 5000</Text>
-                    <TouchableOpacity onPress={() => alert('kepencet')}>
-                      <View style={styles.buttonBeli}>
-                        <Text style={styles.fontBeli}>BELI</Text>
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => alert('kepencet')}>
-                      <View style={styles.buttonPesan}>
-                        <Text style={styles.fontPesan}>KIRIM PESAN</Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.viewBuletan}>
-                    <View style={styles.buletan} />
-                  </View>
-                </View>
-              </View>
-            </View>
-          </Modal>
           <FAB
             color='#00ADB5'
             style={styles.fabBack}
@@ -121,6 +54,12 @@ export class Maps extends Component {
             color='#00ADB5'
             style={styles.fabLoc}
             icon='my-location'
+            onPress={() => alert('kepencet')}
+          />
+          <FAB
+            color='#00ADB5'
+            style={styles.fabMes}
+            icon='message'
             onPress={() => alert('kepencet')}
           />
         </View>
@@ -147,6 +86,15 @@ const styles = StyleSheet.create({
     top: '3%',
     backgroundColor: 'white',
     color: '#00ADB5'
+  },
+  fabMes: {
+    position: 'absolute',
+    margin: 16,
+    left: 0,
+    bottom: 0,
+    backgroundColor: 'white',
+    color: '#00ADB5',
+    borderRadius:16,
   },
   bottomModal: {
     justifyContent: 'flex-end',
