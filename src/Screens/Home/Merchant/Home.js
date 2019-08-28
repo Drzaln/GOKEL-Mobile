@@ -59,9 +59,9 @@ export class App extends Component {
 
   submitSaldo = () => {
     const saldoTotal = Number(this.state.saldo) + Number(this.state.saldoBaru)
-    console.warn(`saldo total`, saldoTotal)
 
     this.setState({
+      saldo: saldoTotal,
       saldoTampil: saldoTotal,
       isModalVisible: !this.state.isModalVisible
     })
