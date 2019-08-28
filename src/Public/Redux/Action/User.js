@@ -4,7 +4,12 @@ import api from '../../../Config/api'
 export const PostRegisterPembeli = (data) => {
     return {
         type: 'POST_REGIST_PEMBELI',
-        payload: axios.post(`${api}register/pembeli`, data)
+        payload: axios.post(`${api}register/pembeli`, data ,{
+            headers: {
+            'chace' : 'pembeli',
+            'authorization' : 'gokel'
+            }
+        })
     }
 }
 
@@ -26,5 +31,12 @@ export const getUserPembeli = (username) => {
     return {
         type: 'GET_PEMBELI',
         payload: axios.get(`${api}pembeli/${username}`)
+    }
+}
+
+export const getJajan = () => {
+    return {
+        type: 'GET_JAJAN',
+        payload: axios.get(`${api}jajan`)
     }
 }

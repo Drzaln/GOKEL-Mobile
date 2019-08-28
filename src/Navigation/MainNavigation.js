@@ -6,6 +6,7 @@ import {
 import IntroSlider from '../Screens/Welcome/Welcome'
 import Login from '../Screens/Login/Login'
 import RegisterBuyer from '../Screens/Register/RegisterBuyer'
+import RegisterSeller from '../Screens/Register/MerchantRegistration'
 import HomeBuyer from '../Screens/Home/Buyer/Home'
 import HomeSeller from '../Screens/Home/Merchant/Home'
 import ChooseRole from '../Screens/Register/ChooseRole'
@@ -61,11 +62,12 @@ export default createAppContainer(
         Login: Login,
         ChooseRole: ChooseRole,
         RegisterBuyer: RegisterBuyer,
+        RegisterSeller: RegisterSeller,
         Home: AppNavigator,
         HomeSeller: HomeSeller
     },
     {
-      initialRouteName: 'IntroSlider'
+      initialRouteName: 'RegisterSeller'
     }
   )
 )
