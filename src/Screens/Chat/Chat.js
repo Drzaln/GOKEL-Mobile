@@ -209,8 +209,8 @@ export class Chat extends Component {
             messages={this.state.messageList}
             onSend={this.sendMessage}
             user={{
-              _id: this.state.myuid,
-              name: this.state.myname,
+              _id: this.state.myUsername,
+              name: this.state.myUsername,
               avatar: this.state.avatar
             }}
             onInputTextChanged={value => this.setState({ textMessage: value })}
