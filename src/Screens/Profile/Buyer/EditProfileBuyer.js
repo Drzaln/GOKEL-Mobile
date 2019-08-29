@@ -12,7 +12,7 @@ class Profile extends Component {
         this.state = {
             nama: props.navigation.getParam('nama'),
             no_hp: props.navigation.getParam('no_hp'),
-            foto: props.navigation.getParam('foto') || '',
+            foto: props.navigation.getParam('foto'),
             fotobaru: null,
             username: props.navigation.getParam('username'),
             email: props.navigation.getParam('email'),
@@ -33,22 +33,64 @@ class Profile extends Component {
     }
 
     editProfile = () => {
-        dataFile = new FormData(),
-            dataFile.append('foto',
-                {
-                    uri: this.state.fotobaru.uri,
-                    type: 'image/jpg',
-                    name: 'terserah'
-                }
-            ),
-            dataFile.append('email', this.state.email),
-            dataFile.append('username', this.state.username),
-            dataFile.append('nama', this.state.nama),
-            dataFile.append('no', this.state.no_hp)
+        if (this.state.fotobaru) {
+            dataFile = new FormData(),
+                dataFile.append('foto',
+                    {
+                        uri: this.state.fotobaru.uri,
+                        type: 'image/jpg',
+                        name: 'terserah'
+                    }
+                ),
+                dataFile.append('email', this.state.email),
+                dataFile.append('username', this.state.username),
+                dataFile.append('nama', this.state.nama),
+                dataFile.append('no', this.state.no_hp)
+            let item = {
+                nama: this.state.nama,
+                no_hp: this.state.no_hp,
+                foto: this.state.fotobaru.uri,
+                fotobaru: null,
+                username: this.state.username,
+                email: this.state.email,
+                flag: ''
+            }
 
-        const username = this.state.username
-        this.props.dispatch(updateUserPembeli(username, dataFile))
-        this.setState({ flag: 'true' })
+            const username = this.state.username
+            this.props.dispatch(updateUserPembeli(username, dataFile))
+            this.props.navigation.navigate('ProfileBuyer', item)
+                
+        } else {
+            dataFile = new FormData(),
+                dataFile.append('foto',
+                    {
+                        uri: this.state.foto,
+                        type: 'image/jpg',
+                        name: 'terserah'
+                    }
+                ),
+                dataFile.append('email', this.state.email),
+                dataFile.append('username', this.state.username),
+                dataFile.append('nama', this.state.nama),
+                dataFile.append('no', this.state.no_hp)
+            let item = {
+                nama: this.state.nama,
+                no_hp: this.state.no_hp,
+                foto: this.state.foto,
+                fotobaru: null,
+                username: this.state.username,
+                email: this.state.email,
+                flag: ''
+            }
+
+            const username = this.state.username
+            this.props.dispatch(updateUserPembeli(username, dataFile))
+            this.props.navigation.navigate('ProfileBuyer', item)
+                
+            // this.setState({ flag: 'true' })
+
+        }
+
 
     }
 
