@@ -37,6 +37,8 @@ class Home extends Component {
     })
   }
   render() {
+    console.warn(this.state.data)
+
     const items = [
       { name: 'SAYUR', code: '#1abc9c' },
       { name: 'MINUMAN', code: '#2ecc71' },
@@ -58,7 +60,8 @@ class Home extends Component {
       }
     ]
 
-    const list = this.state.data
+    let list = this.state.data
+    // list.push(this.state.name)
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
@@ -71,6 +74,7 @@ class Home extends Component {
               <View>
                 {
                   list.map((item,index) => {
+                    console.warn("item", item)
                     return (
                       <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('ProfileBuyer', item)}>
                         <Image

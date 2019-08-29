@@ -11,7 +11,7 @@ import { FAB } from 'react-native-paper'
 import Modal from 'react-native-modal'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
-export class App extends Component {
+export class Maps extends Component {
   state = {
     isModalVisible: false
   }
@@ -129,7 +129,7 @@ export class App extends Component {
   }
 }
 
-export default App
+export default Maps
 
 const styles = StyleSheet.create({
   fabBack: {
