@@ -50,7 +50,7 @@ export default class Profile extends Component {
                      ref={this.setMenuRef}
                      button={<Icon size={34} onPress={this.showMenu} name={'md-more'} style={styles.icon} />}
                     >
-                   <MenuItem onPress={() => this.props.navigation.navigate('EditProfileUser')&&this.hideMenu()}>Edit</MenuItem>
+                   <MenuItem onPress={() => this.props.navigation.navigate('EditProfileBuyer')&&this.hideMenu()}>Edit</MenuItem>
                    <MenuItem onPress={() => this.islogout() &&this.hideMenu()}>Logout</MenuItem>
                     </Menu>
                     </View>

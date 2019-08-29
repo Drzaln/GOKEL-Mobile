@@ -34,6 +34,13 @@ export const getUserPembeli = (username) => {
     }
 }
 
+export const getUserPedagang = (username) => {
+    return {
+        type: 'GET_PEDAGANG',
+        payload: axios.get(`${api}pedagang/${username}`)
+    }
+}
+
 export const getJajan = () => {
     return {
         type: 'GET_JAJAN',
