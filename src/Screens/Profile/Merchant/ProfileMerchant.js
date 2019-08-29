@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, StatusBar } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import Menu, { MenuItem } from 'react-native-material-menu';
+import { DetailTransaksiPenjual } from '../../../Public/Redux/Action/Transaksi'
+import { connect } from 'react-redux'
 
-export default class Profile extends Component {
+class ProfileMerchant extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -16,7 +18,6 @@ export default class Profile extends Component {
             stock: props.navigation.getParam('stok'),
             harga: props.navigation.getParam('harga'),
             username: props.navigation.getParam('username')
-
         }
     }
 
@@ -38,6 +39,15 @@ export default class Profile extends Component {
         AsyncStorage.clear()
         alert('Berhasil Keluar')
         this.props.navigation.navigate('Login')
+    }
+
+    componentDidMount = async () => {
+        const Username = await AsyncStorage.getItem('Username')
+        await this.props.dispatch(DetailTransaksiPenjual(Username))
+        .then((res) => {
+            console.warn(res);
+            console.warn(this.props.detailTransaksi);
+        }) 
     }
 
     render() {
@@ -72,19 +82,31 @@ export default class Profile extends Component {
                     </View>
                 </View>
                 <View style={styles.layHistory}>
-                    <Text style={styles.textHistory}>Jualan Saya</Text>
+                    <Text style={styles.textHistory}>Riwayat Penjualan</Text>
+                    {this.props.detailTransaksi.map((item) => {
+                    return (
                     <View style={styles.layMenu}>
-                        <Text style={styles.number}>1</Text>
+                        {/* <Text style={styles.number}>1</Text> */}
                         <View style={{ marginLeft: 20 }}>
-                            <Text style={styles.menu}>{}</Text>
-                            <Text style={styles.price}>Rp. 9000</Text>
+                            <Text style={styles.menu}>Nama Pembeli: {item.pembeli}</Text>
+                            <Text style={styles.price}>Total Harga: {item.total_harga}</Text>
                         </View>
                     </View>
+                    )
+                    })}
                 </View>
             </View>
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        detailTransaksi: state.transaksi.detailTransaksi
+    }
+}
+
+export default connect(mapStateToProps)(ProfileMerchant)
 
 const styles = StyleSheet.create({
     container: {

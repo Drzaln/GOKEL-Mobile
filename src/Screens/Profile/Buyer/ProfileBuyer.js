@@ -40,10 +40,11 @@ class ProfileBuyer extends Component {
     }
 
     componentDidMount = async () => {
-        const Username = await AsyncStorage.getItem('Username')        
+        const Username = await AsyncStorage.getItem('Username')       
         await this.props.dispatch(DetailTransaksiPembeli(Username))
         .then((res) => {
-            console.log(res);
+            console.warn(res);
+            console.warn(this.props.detailTransaksi);
         }) 
     }
 
@@ -84,25 +85,24 @@ class ProfileBuyer extends Component {
                         </View>
                     </View>
                 </View>
-                
-                {this.props.detailTransaksi.map((item) => {
-                    console.warn('iniiii', item.username)
-                    return(
                 <View style={styles.layHistory}>
-                    <Text style={styles.textHistory}>History</Text>
+                <Text style={styles.textHistory}>Riwayat Pembelian</Text>
+                {this.props.detailTransaksi.map((item) => {
+                    // console.warn("transaksi", item.pedagang);
+                return(
                     <View style={styles.layMenu}>
-                        <Text style={styles.number}>1</Text>
+                        {/* <Text style={styles.number}>1</Text> */}
                         <View style={{ marginLeft: 20 }}>
-                            <Text style={styles.menu}>{item.username}</Text>
-                            <Text style={styles.price}>Rp. 9000</Text>
+                            <Text style={styles.menu}>Nama Penjual: {item.pedagang}</Text>
+                            <Text style={styles.price}>Total Harga: {item.total_harga}</Text>
+                            <Text style={styles.price}>Jumlah Barang: {item.jumlah}</Text>
                         </View>
                     </View>
-                </View>
                     )
                 })}
+                </View>
             </View>
-        )    
-        
+        )           
     }
 }
 
