@@ -124,7 +124,6 @@ const styles = StyleSheet.create({
     layout: {
         width: '100%',
         height: '28%',
-
         backgroundColor: '#1abc9c',
         paddingHorizontal: '10%',
         borderBottomLeftRadius: 20,
