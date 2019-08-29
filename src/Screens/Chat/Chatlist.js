@@ -7,11 +7,11 @@ export default class Chatlist extends Component {
         super()
         this.state = {
             data: [],
-            name: ''
+            myname: ''
         }
         AsyncStorage.getItem('Username', (err, result) => {
             if (result) {
-              this.setState({ name: result })
+              this.setState({ myname: result })
             }
         })
     }
@@ -20,15 +20,20 @@ export default class Chatlist extends Component {
       this.getFirebase()
     }
 
-    getFirebase (){
-        let dbRef = firebase.database().ref('users/pembeli' );
-        dbRef.on('child_added', (val) => {
-            let user = val.val();
+    getFirebase = async() =>{
+        let myname = await AsyncStorage.getItem('Username')
+        console.warn("my name",myname)
+        firebase.database()
+                .ref('messages/'+ myname )
+                .on('child_added', (val) => {
+            let user = val.key;
+            let data = val.val();
             console.warn('person',user)
+            console.warn('person',data)
             if ( user !== '') {
                 this.setState((prevState) => {
                     return {
-                        data: [...prevState.data, user]
+                        data: [...prevState.data, user ]
                     }
                 })
             }
@@ -39,15 +44,17 @@ export default class Chatlist extends Component {
         console.warn("item",item)
         return( 
             <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('ChatSell',{item: item})}
             style={styles.contact}>
             <View style={{ width: '50%', marginLeft: 10 }}>
-                <Text style={styles.name}>{item.username}</Text>
+                <Text style={styles.name}>{item}</Text>
             </View>
         </TouchableOpacity>
         )
     }
     render(){
         console.warn("data", this.state.data)
+        console.warn("dari render", this.state.myname)
         return(
             <View style={styles.container}>
             <StatusBar backgroundColor="white" barStyle="dark-content" />
@@ -79,7 +86,7 @@ const styles = StyleSheet.create({
         scaleY: 0.2
     },
     header: {
-        height: 65,
+        height: 70,
         backgroundColor: 'white',
         elevation: 2,
         alignItems: 'center',
@@ -87,7 +94,7 @@ const styles = StyleSheet.create({
     },
     logoText: {
         fontWeight: '900',
-        marginTop: 15,
+        marginTop: 25,
         fontSize: 28,
         alignItems: 'center',
         color: '#333'
@@ -111,7 +118,7 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 20,
         fontWeight: '900',
-        width: '50%',
+        width: '100%',
         color: '#666'
     },
     indicatorOn: {

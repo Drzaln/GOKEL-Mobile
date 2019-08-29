@@ -12,6 +12,7 @@ import {
 import { FAB } from 'react-native-paper'
 import Modal from 'react-native-modal'
 import firebase from 'react-native-firebase'
+import Spinner from 'react-native-loading-spinner-overlay'
 import geolocation from '@react-native-community/geolocation';
 import { connect } from 'react-redux'
 import { getUserPedagang } from '../../../Public/Redux/Action/User'
@@ -20,6 +21,7 @@ class HomeSeller extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      spinner: false,
       harga: '',
       porsi: '',
       data: [],
@@ -31,6 +33,9 @@ class HomeSeller extends Component {
   }
 
   componentWillMount() {
+    this.setState({
+      spinner: true
+    })
     AsyncStorage.getItem('Username', (err, result) => {
       if (result) {
         this.setState({ name: result })
@@ -41,6 +46,7 @@ class HomeSeller extends Component {
           this.setState({
             data: result.value.data.result,
             dataUser: result.value.data.result[0],
+            spinner: false
           })
           this.updateToFirebase()
         })
@@ -132,6 +138,11 @@ class HomeSeller extends Component {
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
         <View>
+        <Spinner
+          visible={this.state.spinner}
+          textContent={'Loading...'}
+          textStyle={{ color: '#fff' }}
+        />
           <View
             style={{ padding: 16, backgroundColor: 'white', height: '100%' }}
           >
@@ -187,7 +198,7 @@ class HomeSeller extends Component {
                   placeholder='Harga...'
                   placeholderTextColor='grey'
                   clearTextOnFocus
-                  autoFocus
+                 
                 />
               </View>
               <View style={styles.textField}>

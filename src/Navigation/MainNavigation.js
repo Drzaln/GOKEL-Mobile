@@ -17,6 +17,7 @@ import MapBuyer from '../Screens/Home/Buyer/Maps'
 
 import RegisterSeller from '../Screens/Register/MerchantRegistration'
 import HomeSell from '../Screens/Home/Merchant/Home'
+import ChatSell from '../Screens/Chat/ChatSeller'
 import ProfileSeller from '../Screens/Profile/Merchant/ProfileMerchant'
 import EditProfileSeller from '../Screens/Profile/Merchant/EditProfileMerchant'
 import EditPrice from "../Screens/Profile/Merchant/EditPriceStock";
@@ -91,6 +92,12 @@ const SellerNavigator = createStackNavigator({
     },
     Chatlist: {
         screen: Chatlist,
+        navigationOptions:{
+            header: null
+        }
+    },
+    ChatSell: {
+        screen: ChatSell,
         navigationOptions:{
             header: null
         }

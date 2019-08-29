@@ -12,7 +12,11 @@ import geolocation from '@react-native-community/geolocation';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
 export class Maps extends Component {
-  componentDidMount() {
+  constructor(){
+    super()
+    this.state = {
+
+    }
     this.getLocation()
   }
 
@@ -29,6 +33,7 @@ export class Maps extends Component {
   }
 
   onRegionChange(region, lastLat, lastLong) {
+    console.warn("region", region)
     this.setState({
       mapRegion: region,
       // // If there are no new values set the current ones
@@ -82,7 +87,7 @@ export class Maps extends Component {
             color='#00ADB5'
             style={styles.fabMes}
             icon='message'
-            onPress={() => this.props.navigation.navigate('Chat')}
+            onPress={() => this.props.navigation.navigate('Chatlist')}
           />
         </View>
       </>
