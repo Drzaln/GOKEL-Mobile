@@ -2,15 +2,19 @@ import React, { Component } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, StatusBar } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import Menu, { MenuItem } from 'react-native-material-menu';
+import Spinner from 'react-native-loading-spinner-overlay'
+import { DetailTransaksiPembeli } from '../../../Public/Redux/Action/Transaksi'
+import { connect } from 'react-redux'
 
-export default class Profile extends Component {
-    constructor(props){
+class ProfileBuyer extends Component {
+    constructor(props) {
         super(props)
         this.state = {
+            spinner: false,
             foto: props.navigation.getParam('foto'),
-            nama:props.navigation.getParam('nama'),
-            email:props.navigation.getParam('email'),
-            no_hp:props.navigation.getParam('no_hp'),
+            nama: props.navigation.getParam('nama'),
+            email: props.navigation.getParam('email'),
+            no_hp: props.navigation.getParam('no_hp'),
             username: props.navigation.getParam('username'),
         }
     }
@@ -27,60 +31,88 @@ export default class Profile extends Component {
 
     hideMenu = () => {
         this._menu.hide();
-      };
+    };
 
-    islogout(){
-         AsyncStorage.clear()
+    islogout() {
+        AsyncStorage.clear()
         alert('Berhasil Keluar')
         this.props.navigation.navigate('Login')
     }
 
+    componentDidMount = async () => {
+        const Username = await AsyncStorage.getItem('Username')        
+        await this.props.dispatch(DetailTransaksiPembeli(Username))
+        .then((res) => {
+            console.log(res);
+        }) 
+    }
+
     render() {
-        console.warn('profile',this.state.username)
+
+        
+        console.warn('nama props', this.props.navigation.getParam('nama'))
+        console.warn('nama state', this.state.nama)
+
         const { goBack } = this.props.navigation;
-        const {foto, nama, email, no_hp, username} = this.state
-        const data = {foto, nama, no_hp, username, email}
+        const { foto, nama, email, no_hp, username } = this.state
+        const data = { foto, nama, email, no_hp, username }
+        
         return (
             <View>
                 <StatusBar backgroundColor="#1abc9c" barStyle="dark-content" />
                 <View style={styles.layout}>
-                   <View style={{flexDirection: 'row', width: '100%'}}>
-                    <TouchableOpacity style={{marginTop:20, alignItems: 'flex-start', flex:1}}>
-                        <Icon size={34} name={'md-arrow-back'} onPress={() => goBack()} style={styles.icon} />
-                    </TouchableOpacity>
-                    <View style={{marginTop:20, alignItems: 'flex-end', flex: 1}}>
-                    <Menu
-                     ref={this.setMenuRef}
-                     button={<Icon size={34} onPress={this.showMenu} name={'md-more'} style={styles.icon} />}
-                    >
-                   <MenuItem onPress={() => this.props.navigation.navigate('EditProfileBuyer')&&this.hideMenu()}>Edit</MenuItem>
-                   <MenuItem onPress={() => this.islogout() &&this.hideMenu()}>Logout</MenuItem>
-                    </Menu>
-                    </View>
+                    <View style={{ flexDirection: 'row', width: '100%' }}>
+                        <TouchableOpacity style={{ marginTop: 20, alignItems: 'flex-start', flex: 1 }}>
+                            <Icon size={34} name={'md-arrow-back'} onPress={() => goBack()} style={styles.icon} />
+                        </TouchableOpacity>
+                        <View style={{ marginTop: 20, alignItems: 'flex-end', flex: 1 }}>
+                            <Menu
+                                ref={this.setMenuRef}
+                                button={<Icon size={34} onPress={this.showMenu} name={'md-more'} style={styles.icon} />}
+                            >
+                                <MenuItem onPress={() => this.props.navigation.navigate('EditProfileBuyer', data) && this.hideMenu()}>Edit</MenuItem>
+                                <MenuItem onPress={() => this.islogout() && this.hideMenu()}>Logout</MenuItem>
+                            </Menu>
+                        </View>
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                        <Image style={styles.photo} source={{ uri: `${foto}` }} />
+                        <Image style={styles.photo} source={{ uri: `${this.props.navigation.getParam('foto')}` }} />
                         <View style={styles.layText}>
-                            <Text style={styles.nameUser}>{nama}</Text>
+                            <Text style={styles.nameUser}>{this.props.navigation.getParam('nama')}</Text>
                             <Text style={styles.email}>{email}</Text>
-                            <Text style={styles.hp}>{no_hp}</Text>
+                            <Text style={styles.hp}>{this.props.navigation.getParam('no_hp')}</Text>
                         </View>
                     </View>
                 </View>
+                
+                {this.props.detailTransaksi.map((item) => {
+                    console.warn('iniiii', item.username)
+                    return(
                 <View style={styles.layHistory}>
                     <Text style={styles.textHistory}>History</Text>
                     <View style={styles.layMenu}>
                         <Text style={styles.number}>1</Text>
-                        <View style={{marginLeft:20}}>
-                            <Text style={styles.menu}>Name of Menu</Text>
+                        <View style={{ marginLeft: 20 }}>
+                            <Text style={styles.menu}>{item.username}</Text>
                             <Text style={styles.price}>Rp. 9000</Text>
                         </View>
                     </View>
                 </View>
+                    )
+                })}
             </View>
-        )
+        )    
+        
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        detailTransaksi: state.transaksi.detailTransaksi
+    }
+}
+
+export default connect(mapStateToProps)(ProfileBuyer)
 
 const styles = StyleSheet.create({
     container: {

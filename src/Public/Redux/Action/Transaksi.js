@@ -15,7 +15,7 @@ export const PostTransaksi = (data) => {
 export const DetailTransaksiPembeli = (username) => {
     return {
         type: 'GET_TRANSAKSI_PEMBELI',
-        payload: axios.get(`${url}/transaksipembeli/${username}`, {
+        payload: axios.get(`https://gokel-251109.appspot.com/transaksi/transaksipembeli/${username}`, {
             headers: {
                 'authorization': 'gokel'
             }
@@ -26,7 +26,7 @@ export const DetailTransaksiPembeli = (username) => {
 export const DetailTransaksiPenjual = (username) => {
     return {
         type: 'GET_TRANSAKSI_PENJUAL',
-        payload: axios.get(`${url}/transaksipedagang/${username}`, {
+        payload: axios.get(`${url}transaksipedagang/${username}`, {
             headers: {
                 'authorization': 'gokel'
             }

@@ -1,5 +1,3 @@
-import { ActionType } from "redux-promise-middleware";
-
 const initialState = {
     detailTransaksi: [],
     isLoading: false,
@@ -29,7 +27,7 @@ const transaksi = (state = initialState, action) => {
                 isLoading: false,
                 isRejected: false,
                 isFulfilled: true,
-                detailTransaksi: action.payload.data
+                detailTransaksi: action.payload.data.result
             }
         case 'GET_TRANSAKSI_PEMBELI_PENDING':
             return {
@@ -51,7 +49,7 @@ const transaksi = (state = initialState, action) => {
                 isLoading: false,
                 isRejected: false,
                 isFulfilled: true,
-                detailTransaksi: action.payload.data
+                detailTransaksi: action.payload.data.result
             }
         case 'GET_TRANSAKSI_PENJUAL_PENDING':
             return {
