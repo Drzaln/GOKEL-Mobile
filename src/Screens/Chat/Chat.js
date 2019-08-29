@@ -25,29 +25,32 @@ export class Chat extends Component {
     super(props)
     this.state = {
       name: 'Siomay Kang Ucay',
-      uid: 1,
-      myuid: 2,
+      uid: 'tai',
+      myuid: 'asu',
       role: '',
       myname: 'Jakun',
       avatar: '',
       image: 'blabla',
       textMessage: '',
-      messageList: []
+      messageList: [],
+      myUsername: '',
+      username: this.props.navigation.getParam('username')
     }
-    AsyncStorage.getItem('Role', (error, result) => {
-        this.setState({
-          role: result
-        })
-      })
   }
 
   db = firebase.database()
 
-  async componentDidMount () {
-    await this.db
+  componentDidMount = async() => {
+    const datarole  = await AsyncStorage.getItem('Role')
+    const dataUsername = await AsyncStorage.getItem('Username')
+    this.setState({
+      myUsername : dataUsername,
+      role:datarole
+    })
+    this.db
       .ref('messages')
-      .child(this.state.myuid)
-      .child(this.state.uid)
+      .child(this.state.myUsername)
+      .child(this.state.username)
       .on('child_added', value => {
         this.setState(previousState => {
           return {
@@ -64,8 +67,8 @@ export class Chat extends Component {
     if (this.state.textMessage.length > 0) {
       let msgId = this.db
         .ref('messages')
-        .child(this.state.myuid)
-        .child(this.state.uid)
+        .child(this.state.myUsername)
+        .child(this.state.username)
         .push().key
       let updates = {}
       let message = {
@@ -73,16 +76,26 @@ export class Chat extends Component {
         text: this.state.textMessage,
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         user: {
-          _id: this.state.myuid,
-          name: this.state.myname,
+          _id: this.state.myUsername,
+          name: this.state.myUsername,
           avatar: this.state.avatar
         }
       }
       updates[
-        'messages/' + this.state.myuid + '/' + this.state.uid + '/' + msgId
+        'messages/' +
+          this.state.myUsername +
+          '/' +
+          this.state.username +
+          '/' +
+          msgId
       ] = message
       updates[
-        'messages/' + this.state.uid + '/' + this.state.myuid + '/' + msgId
+        'messages/' +
+          this.state.username +
+          '/' +
+          this.state.myUsername +
+          '/' +
+          msgId
       ] = message
       this.db.ref().update(updates)
       this.setState({ textMessage: '' })
@@ -154,19 +167,19 @@ export class Chat extends Component {
     )
   }
 
-  checkRole= async() => {
+  checkRole = async () => {
     const { role } = this.state
     if (role === 'pembeli') {
       this.props.navigation.navigate('MapBuyer')
     } else if (role === 'pedagang') {
       this.props.navigation.navigate('MapSeller')
     } else {
-      alert("ada kesalah!!! Hubungi penyedia layanan")
+      alert('ada kesalah!!! Hubungi penyedia layanan')
     }
   }
 
   render () {
-    const { goBack } = this.props.navigation;
+    const { goBack } = this.props.navigation
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
@@ -183,7 +196,7 @@ export class Chat extends Component {
               />
             </TouchableOpacity>
             <View style={styles.headerLeft}>
-              <Text style={styles.name}>Siomay Kang Ucay</Text>
+              <Text style={styles.name}>{this.state.username}</Text>
             </View>
           </View>
           <GiftedChat
@@ -192,8 +205,8 @@ export class Chat extends Component {
             messages={this.state.messageList}
             onSend={this.sendMessage}
             user={{
-              _id: this.state.myuid,
-              name: this.state.myname,
+              _id: this.state.myUsername,
+              name: this.state.myUsername,
               avatar: this.state.avatar
             }}
             onInputTextChanged={value => this.setState({ textMessage: value })}
