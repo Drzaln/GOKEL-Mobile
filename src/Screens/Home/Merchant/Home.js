@@ -15,7 +15,7 @@ import firebase from 'react-native-firebase'
 import Spinner from 'react-native-loading-spinner-overlay'
 import geolocation from '@react-native-community/geolocation';
 import { connect } from 'react-redux'
-import { getUserPedagang, updateSaldo } from '../../../Public/Redux/Action/User'
+import { getUserPedagang, updateSaldo, updateStock } from '../../../Public/Redux/Action/User'
 
 class HomeSeller extends Component {
   constructor(props) {
@@ -88,6 +88,7 @@ class HomeSeller extends Component {
       idJajan: dataUser.id_jajan,
       saldo: dataUser.saldo,
       stock: dataUser.stok,
+      foto: "http://res.cloudinary.com/ayiangio/image/upload/v1567092668/fehuyhtjksk0qcqxjssa.jpg",
       harga: dataUser.harga,
       username: dataUser.username,
       nama: dataUser.nama,
@@ -127,7 +128,35 @@ class HomeSeller extends Component {
       saldoTampil: saldoTotal,
       isModalVisible: !this.state.isModalVisible
     })
-    
+  }
+
+  mulaiDagang = () => {
+      const { name, harga, porsi, saldoTampil } = this.state
+      console.warn('utuk update', name)
+      console.warn('utuk harga', harga)
+      console.warn('utuk porsi', porsi)
+      console.warn('utuk saldo', saldoTampil)
+      let data = {
+        stok: porsi,
+harga: harga
+      }
+    if(saldoTampil < 5000){
+      alert("Saldo Tidak Mencukupi. Isi ulang saldo sekarang dengan minimum 5000")
+    }else{
+      firebase.database().ref('/users/' + 'pedagang' + '/' + name).update({
+        harga: harga,
+        porsi: porsi,
+      })
+      this.props.dispatch(updateStock(name,data))
+      .then((result) =>{
+        console.warn("result",result)
+        this.props.navigation.navigate('MapSeller')
+      })
+      .catch((error)=>{
+        console.warn("error",error)
+      })
+        
+    }
   }
 
   render() {
@@ -217,10 +246,11 @@ class HomeSeller extends Component {
               <TouchableOpacity
                 onPress={this.props.suara}
                 rippleColor='rgba(0, 0, 0, .32)'
+                onPress={() =>this.mulaiDagang()}
               >
                 <View style={styles.drumGedeLuar}>
                   <View style={styles.drumGedeDalem}>
-                    <TouchableOpacity onPress={() =>this.props.navigation.navigate('MapSeller')}>
+                    <TouchableOpacity >
                       <Text
                       style={{
                         fontFamily: 'Montserrat-Bold',

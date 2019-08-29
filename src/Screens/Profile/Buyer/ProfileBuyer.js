@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, StatusBar } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, StatusBar, ScrollView } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay'
@@ -40,24 +40,22 @@ class ProfileBuyer extends Component {
     }
 
     componentDidMount = async () => {
-        const Username = await AsyncStorage.getItem('Username')       
+        const Username = await AsyncStorage.getItem('Username')
         await this.props.dispatch(DetailTransaksiPembeli(Username))
-        .then((res) => {
-            console.warn(res);
-            console.warn(this.props.detailTransaksi);
-        }) 
+            .then((res) => {
+                console.warn(res);
+                console.warn(this.props.detailTransaksi);
+            })
     }
 
     render() {
-
-        
         console.warn('nama props', this.props.navigation.getParam('nama'))
         console.warn('nama state', this.state.nama)
 
         const { goBack } = this.props.navigation;
         const { foto, nama, email, no_hp, username } = this.state
         const data = { foto, nama, email, no_hp, username }
-        
+
         return (
             <View>
                 <StatusBar backgroundColor="#1abc9c" barStyle="dark-content" />
@@ -66,7 +64,7 @@ class ProfileBuyer extends Component {
                         <TouchableOpacity style={{ marginTop: 20, alignItems: 'flex-start', flex: 1 }}>
                             <Icon size={34} name={'md-arrow-back'} onPress={() => goBack()} style={styles.icon} />
                         </TouchableOpacity>
-                        <View style={{ marginTop: 20, alignItems: 'flex-end', flex: 1 }}>
+                        <View style={{ marginTop: 20, alignItems: 'flex-end', flex: 1, height: '50%' }}>
                             <Menu
                                 ref={this.setMenuRef}
                                 button={<Icon size={34} onPress={this.showMenu} name={'md-more'} style={styles.icon} />}
@@ -76,7 +74,7 @@ class ProfileBuyer extends Component {
                             </Menu>
                         </View>
                     </View>
-                    <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                    <View style={{ flexDirection: 'row', marginTop: '5%'}}>
                         <Image style={styles.photo} source={{ uri: `${this.props.navigation.getParam('foto')}` }} />
                         <View style={styles.layText}>
                             <Text style={styles.nameUser}>{this.props.navigation.getParam('nama')}</Text>
@@ -86,23 +84,27 @@ class ProfileBuyer extends Component {
                     </View>
                 </View>
                 <View style={styles.layHistory}>
-                <Text style={styles.textHistory}>Riwayat Pembelian</Text>
-                {this.props.detailTransaksi.map((item) => {
-                    // console.warn("transaksi", item.pedagang);
-                return(
-                    <View style={styles.layMenu}>
-                        {/* <Text style={styles.number}>1</Text> */}
-                        <View style={{ marginLeft: 20 }}>
-                            <Text style={styles.menu}>Nama Penjual: {item.pedagang}</Text>
-                            <Text style={styles.price}>Total Harga: {item.total_harga}</Text>
-                            <Text style={styles.price}>Jumlah Barang: {item.jumlah}</Text>
-                        </View>
+                    <Text style={styles.textHistory}>Riwayat Pembelian</Text>
+                    <View style={{height: '74%', paddingBottom: 20}}>
+                    <ScrollView>
+                        {this.props.detailTransaksi.map((item) => {
+                            // console.warn("transaksi", item.pedagang);
+                            return (
+                                <ScrollView style={styles.layMenu}>
+                                    {/* <Text style={styles.number}>1</Text> */}
+                                    <View style={{ marginLeft: 20 }}>
+                                        <Text style={styles.menu}>Nama Penjual: {item.pedagang}</Text>
+                                        <Text style={styles.price}>Total Harga: {item.total_harga}</Text>
+                                        <Text style={styles.price}>Jumlah Barang: {item.jumlah}</Text>
+                                    </View>
+                                </ScrollView>
+                            )
+                        })}
+                    </ScrollView>
                     </View>
-                    )
-                })}
                 </View>
             </View>
-        )           
+        )
     }
 }
 
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     },
     layout: {
         width: '100%',
-        height: '45%',
+        height: '28%',
         backgroundColor: '#1abc9c',
         paddingHorizontal: '10%',
         borderBottomLeftRadius: 20,
@@ -190,18 +192,18 @@ const styles = StyleSheet.create({
         fontSize: 15
     },
     layHistory: {
-        marginTop: 50,
+        marginTop: '5%',
         marginHorizontal: '10%'
     },
     textHistory: {
         fontFamily: 'Montserrat-Bold',
         color: '#3e383e',
-        fontSize: 24
+        textAlign: 'center',
+        marginBottom: '3%',
+        fontSize: 30
     },
     layMenu: {
         marginLeft: 20,
-        justifyContent: 'flex-start',
-        alignItems: 'center',
         flexDirection: 'row',
         marginTop: 10
     },
