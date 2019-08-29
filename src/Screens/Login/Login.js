@@ -7,10 +7,13 @@ import {
   Text,
   TextInput,
   StatusBar,
+  Alert,
   AsyncStorage,
   TouchableOpacity
 } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
+import firebase from 'react-native-firebase'
+import geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/Ionicons'
 import { connect } from 'react-redux'
 import { PostLogin } from '../../Public/Redux/Action/User'
@@ -23,34 +26,9 @@ class Login extends Component {
       role: '',
       username: '',
       password: '',
+      latitude: 0,
+      longitude: 0,
       data: []
-    }
-  }
-
-  isLogin = async () => {
-    const { username, password } = this.state
-    if (username !== '' && password !== '') {
-      let data = {
-        username: username,
-        password: password
-      }
-      await this.props.dispatch(PostLogin(data))
-        .then((result) => {
-          alert('Berhasil Login, Selamat Datang ' + result.value.data.result.username)
-          let role = result.value.data.result.role
-          if (role === 'pembeli') {
-            this.props.navigation.navigate('HomeBuyer')
-          } else if (role === 'pedagang') {
-            this.props.navigation.navigate('HomeSeller')
-          } else {
-            alert("ada kesalah!!! Hubungi penyedia layanan")
-          }
-        })
-        .catch((error) => {
-          alert("Username & Password tidak cocok", error)
-        })
-    } else {
-      alert('Warning, please insert Data in form')
     }
   }
 
@@ -71,9 +49,85 @@ class Login extends Component {
     })
   }
 
+  componentDidMount() {
+    // await this.user()
+    this.watchID = geolocation.getCurrentPosition((position) => {
+      this.setState({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+    })
+  }
+
+  checkRole= async() => {
+    const { role } = this.state
+    if (role === 'pembeli') {
+      this.props.navigation.navigate('HomeBuyer')
+    } else if (role === 'pedagang') {
+      this.props.navigation.navigate('HomeSeller')
+    } else {
+      alert("ada kesalah!!! Hubungi penyedia layanan")
+    }
+  }
+
+  isLogin = async (data) => {
+    const { username, password } = this.state
+    this.setState({
+      spinner: true
+    })
+    if (username !== '' && password !== '') {
+      await this.props.dispatch(PostLogin(data))
+        .then((result) => {
+          console.warn("nama", result.value.data.result.username)
+          let namauser = result.value.data.result.username
+          this.setState({
+            username: namauser,
+            spinner: false
+          })
+          Alert.alert(
+            'Success',
+            'Berhasil Login, Selamat Datang ' + namauser,
+            [
+              { text: 'OK', onPress: () => this.checkRole() },
+            ],
+            { cancelable: false },
+          );
+          let role = result.value.data.result.role
+          this.setState({
+            role: role,
+            spinner: false
+          })
+
+        })
+        .catch((error) => {
+          alert("Username & Password tidak cocok", error)
+          this.setState({
+            username: '',
+            password: '',
+            spinner: false
+          })
+        })
+    } else {
+      alert('Warning, please insert Data in form')
+      this.setState({
+        spinner: false
+      })
+    }
+  }
+
   render() {
+    const { username, password } = this.state
+    let data = {
+      username: username,
+      password: password
+    }
     return (
       <View style={styles.container}>
+        <Spinner
+          visible={this.state.spinner}
+          textContent={'Loading...'}
+          textStyle={{ color: '#fff' }}
+        />
         <View style={styles.layLogin}>
           <Text style={styles.Login}>Log In</Text>
           <View style={styles.layInput}>
@@ -89,6 +143,7 @@ class Login extends Component {
                   onSubmitEditing={() => {
                     this.secondTextInput.focus()
                   }}
+                  value={this.state.username}
                   onChangeText={username => this.setState({ username })}
                 />
               </View>
@@ -101,6 +156,7 @@ class Login extends Component {
                   ref={input => {
                     this.secondTextInput = input
                   }}
+                  value={this.state.password}
                   onChangeText={password => this.setState({ password })}
                 />
               </View>
@@ -115,7 +171,7 @@ class Login extends Component {
           >
             <TouchableOpacity
               style={styles.butLogIn}
-              onPress={() => this.isLogin()}
+              onPress={() => this.isLogin(data)}
             >
               <Text style={styles.textLogIn}>Log In</Text>
               <Icon size={20} name={'md-arrow-forward'} style={styles.icon} />

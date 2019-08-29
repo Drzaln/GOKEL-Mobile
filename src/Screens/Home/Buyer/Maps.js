@@ -9,11 +9,41 @@ import {
 } from 'react-native'
 import { FAB } from 'react-native-paper'
 import Modal from 'react-native-modal'
+import firebase from 'react-native-firebase'
+import geolocation from '@react-native-community/geolocation';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
 export class Maps extends Component {
-  state = {
-    isModalVisible: false
+  constructor(){
+    super()
+    this.state = {
+      isModalVisible: false
+    }
+  }
+
+  componentDidMount() {
+    this.getLocation()
+  }
+
+  getLocation() {
+    this.watchID = geolocation.getCurrentPosition((position) => {
+      let region = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        latitudeDelta: 0.00922 * 1.5,
+        longitudeDelta: 0.00421 * 1.5
+      }
+      this.onRegionChange(region, region.latitude, region.longitude);
+    }, (error) => console.log(error));
+  }
+
+  onRegionChange(region, lastLat, lastLong) {
+    this.setState({
+      mapRegion: region,
+      // // If there are no new values set the current ones
+      lastLat: lastLat || this.state.lastLat,
+      lastLong: lastLong || this.state.lastLong
+    });
   }
 
   toggleModal = () => {
@@ -33,6 +63,7 @@ export class Maps extends Component {
   }
 
   render () {
+    const { goBack } = this.props.navigation;
     return (
       <>
         <StatusBar
@@ -49,18 +80,13 @@ export class Maps extends Component {
             showsMyLocationButton={false}
             provider={PROVIDER_GOOGLE}
             style={styles.map}
-            initialRegion={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            }}
+            region={this.state.mapRegion}
           >
             <Marker
               onPress={() => this.toggleModal()}
               coordinate={{
-                latitude: 37.78825,
-                longitude: -122.4324
+                latitude: -7.755991,
+                longitude: 110.369858
               }}
             />
           </MapView>
@@ -96,7 +122,7 @@ export class Maps extends Component {
                         <Text style={styles.fontBeli}>BELI</Text>
                       </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => alert('kepencet')}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Chat')}>
                       <View style={styles.buttonPesan}>
                         <Text style={styles.fontPesan}>KIRIM PESAN</Text>
                       </View>
@@ -114,14 +140,14 @@ export class Maps extends Component {
             style={styles.fabBack}
             small
             icon='arrow-back'
-            onPress={() => alert('kepencet')}
+            onPress={() => goBack()}
           />
           <FAB
             small
             color='#00ADB5'
             style={styles.fabLoc}
             icon='my-location'
-            onPress={() => alert('kepencet')}
+            onPress={() => this.getLocation()}
           />
         </View>
       </>

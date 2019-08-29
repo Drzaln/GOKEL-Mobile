@@ -129,6 +129,7 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps)(withNavigation(Profile))
+
 const styles = StyleSheet.create({
     input: {
         padding: 10,

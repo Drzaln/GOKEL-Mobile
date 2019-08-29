@@ -10,6 +10,8 @@ import {
   FlatList
 } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid'
+import firebase from 'react-native-firebase'
+import geolocation from '@react-native-community/geolocation';
 import { connect } from 'react-redux'
 import { getUserPembeli } from '../../../Public/Redux/Action/User'
 
@@ -18,8 +20,41 @@ class Home extends Component {
     super()
     this.state = {
       name: '',
-      data: []
+      dataUser: '',
+      data: [],
+      allCoor: ''
     }
+  }
+
+  componentDidMount() {
+    this.getLocation()
+  }
+
+  getLocation() {
+    this.watchID = geolocation.getCurrentPosition((position) => {
+      this.setState({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+    })
+  }
+
+  user = () => {
+    firebase.database().ref('users/').on('value', (result) => {
+      let data = result.val();
+      let buyer = 'pembeli'
+      console.warn('data', data)
+      console.warn('nama', this.state.name)
+      if (data.pembeli === buyer) {
+        buyer = data.pembeli
+      } else {
+        this.setState((prevState) => {
+          return {
+            allCoor: [...prevState.allCoor, data.pedagang]
+          }
+        })
+      }
+    });
   }
 
   componentWillMount() {
@@ -30,12 +65,28 @@ class Home extends Component {
       this.props.dispatch(getUserPembeli(this.state.name))
         .then((result) => {
           this.setState({
-            data: result.value.data.result
+            data: result.value.data.result,
+            dataUser: result.value.data.result[0],
           })
+          this.updateToFirebase()
         })
 
     })
   }
+
+  updateToFirebase = () => {
+    const { name,dataUser } = this.state
+    console.warn('utuk update', dataUser)
+    firebase.database().ref('/users/' + 'pembeli'+'/'+name).update({
+      username: dataUser.username,
+      nama: dataUser.nama,
+      photo: dataUser.foto,
+      latitude: this.state.latitude,
+      longitude: this.state.longitude
+    })
+
+  }
+
   render() {
     console.warn(this.state.data)
 
@@ -59,8 +110,9 @@ class Home extends Component {
           'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fkawuloalitox.files.wordpress.com%2F2009%2F10%2Fsate-ayam.png&f=1'
       }
     ]
-
-    let list = this.state.data
+    console.warn("alldata", this.state.allCoor)
+    const alldatatoMap = this.state.allCoor
+    const list = this.state.data
     // list.push(this.state.name)
     return (
       <>
@@ -73,7 +125,7 @@ class Home extends Component {
               </View>
               <View>
                 {
-                  list.map((item,index) => {
+                  list.map((item, index) => {
                     console.warn("item", item)
                     return (
                       <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('ProfileBuyer', item)}>
@@ -99,7 +151,7 @@ class Home extends Component {
               renderItem={({ item, index }) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => alert(`kepencet ${index}`)}
+                  onPress={() =>this.props.navigation.navigate('MapBuyer')}
                 >
                   <View
                     style={{
@@ -154,9 +206,9 @@ class Home extends Component {
                 <Text style={styles.textView}>Kategori</Text>
               </View>
               <View style={styles.textLihat}>
-                <TouchableOpacity onPress={() => alert('kepencet')}>
-                  <Text style={styles.textLink}>Lihat semua</Text>
-                </TouchableOpacity>
+                  < TouchableOpacity onPress={() => this.props.navigation.navigate('MapBuyer', alldatatoMap)}>
+                    <Text style={styles.textLink}>Lihat semua</Text>
+                     </TouchableOpacity>
               </View>
             </View>
             <FlatGrid
@@ -167,7 +219,7 @@ class Home extends Component {
               renderItem={({ item, index }) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => alert(`kepencet ${item.name}`)}
+                  onPress={() =>this.props.navigation.navigate('MapBuyer')}
                 >
                   <View
                     style={[

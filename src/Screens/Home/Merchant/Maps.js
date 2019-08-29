@@ -8,10 +8,37 @@ import {
   StyleSheet
 } from 'react-native'
 import { FAB } from 'react-native-paper'
+import geolocation from '@react-native-community/geolocation';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
 export class Maps extends Component {
+  componentDidMount() {
+    this.getLocation()
+  }
+
+  getLocation() {
+    this.watchID = geolocation.getCurrentPosition((position) => {
+      let region = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        latitudeDelta: 0.00922 * 1.5,
+        longitudeDelta: 0.00421 * 1.5
+      }
+      this.onRegionChange(region, region.latitude, region.longitude);
+    }, (error) => console.log(error));
+  }
+
+  onRegionChange(region, lastLat, lastLong) {
+    this.setState({
+      mapRegion: region,
+      // // If there are no new values set the current ones
+      lastLat: lastLat || this.state.lastLat,
+      lastLong: lastLong || this.state.lastLong
+    });
+  }
+
   render () {
+    const { goBack } = this.props.navigation;
     return (
       <>
         <StatusBar
@@ -47,20 +74,20 @@ export class Maps extends Component {
             style={styles.fabBack}
             small
             icon='arrow-back'
-            onPress={() => alert('kepencet')}
+            onPress={() => goBack()}
           />
           <FAB
             small
             color='#00ADB5'
             style={styles.fabLoc}
             icon='my-location'
-            onPress={() => alert('kepencet')}
+            onPress={() => this.getLocation()}
           />
           <FAB
             color='#00ADB5'
             style={styles.fabMes}
             icon='message'
-            onPress={() => alert('kepencet')}
+            onPress={() => this.props.navigation.navigate('Chat')}
           />
         </View>
       </>
