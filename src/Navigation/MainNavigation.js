@@ -22,7 +22,7 @@ import EditProfileSeller from '../Screens/Profile/Merchant/EditProfileMerchant'
 import EditPrice from "../Screens/Profile/Merchant/EditPriceStock";
 import MapSeller from '../Screens/Home/Merchant/Maps'
 
-import Payment from '../Screens/Payment/PaymentFInal'
+import Payment from '../Screens/Payment/PaymentMethod'
 
 
 const BuyerNavigator = createStackNavigator({
