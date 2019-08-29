@@ -66,3 +66,16 @@ export const getJajan = () => {
         payload: axios.get(`${api}jajan`)
     }
 }
+
+export const updateSaldo = (username, data) => {
+    return {
+        type: 'PATCH_SALDO',
+        payload: axios.patch(`${api}updatesaldo/${username}`, { saldo: data }, 
+            {
+                headers: {
+                'authorization': 'gokel'
+            }
+        })
+    }
+}
+ 
