@@ -59,7 +59,7 @@ const user = (state = initialState, action) => {
         isFulfilled: false,
         isRejected: false
       }
-    case 'GET_PEMBELII_REJECTED':
+    case 'GET_PEMBELI_REJECTED':
       return {
         ...state,
         isLoading: false,
@@ -99,7 +99,7 @@ const user = (state = initialState, action) => {
         isFulfilled: false,
         isRejected: false
       }
-    case 'PATCH_PEMBELII_REJECTED':
+    case 'PATCH_PEMBELI_REJECTED':
       return {
         ...state,
         isLoading: false,
@@ -111,6 +111,26 @@ const user = (state = initialState, action) => {
         isLoading: false,
         isFulfilled: true,
         detailPembeli: action.payload.data
+      }
+      case 'PATCH_PEDAGANG_PENDING':
+      return {
+        ...state,
+        isLoading: true,
+        isFulfilled: false,
+        isRejected: false
+      }
+    case 'PATCH_PEDAGANG_REJECTED':
+      return {
+        ...state,
+        isLoading: false,
+        isRejected: true
+      }
+    case 'PATCH_PEDAGANG_FULFILLED':
+      return {
+        ...state,
+        isLoading: false,
+        isFulfilled: true,
+        detailPedagang: action.payload.data
       }
     default:
       return state

@@ -4,17 +4,18 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import Menu, { MenuItem } from 'react-native-material-menu';
 
 export default class Profile extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
         this.state = {
             foto: props.navigation.getParam('foto'),
-            nama:props.navigation.getParam('nama'),
-            email:props.navigation.getParam('email'),
-            no_hp:props.navigation.getParam('no_hp'),
+            nama: props.navigation.getParam('nama'),
+            email: props.navigation.getParam('email'),
+            no_hp: props.navigation.getParam('no_hp'),
             idCat: props.navigation.getParam('id_category'),
             idJajan: props.navigation.getParam('id_jajan'),
             stock: props.navigation.getParam('stok'),
-            harga : props.navigation.getParam('harga')
+            harga: props.navigation.getParam('harga'),
+            username: props.navigation.getParam('username')
 
         }
     }
@@ -31,41 +32,42 @@ export default class Profile extends Component {
 
     hideMenu = () => {
         this._menu.hide();
-      };
+    };
 
-    islogout(){
-         AsyncStorage.clear()
+    islogout() {
+        AsyncStorage.clear()
         alert('Berhasil Keluar')
         this.props.navigation.navigate('Login')
     }
 
     render() {
         const { goBack } = this.props.navigation;
-        const {foto, nama,email, no_hp} = this.state
+        const { foto, nama, email, no_hp, username } = this.state
+        let data = { foto, nama, email, no_hp, username }
         return (
             <View>
                 <StatusBar backgroundColor="#1abc9c" barStyle="dark-content" />
                 <View style={styles.layout}>
-                   <View style={{flexDirection: 'row', width: '100%'}}>
-                    <TouchableOpacity style={{marginTop:20, alignItems: 'flex-start', flex:1}}>
-                        <Icon size={34} name={'md-arrow-back'} onPress={() => goBack()} style={styles.icon} />
-                    </TouchableOpacity>
-                    <View style={{marginTop:20, alignItems: 'flex-end', flex: 1}}>
-                    <Menu
-                     ref={this.setMenuRef}
-                     button={<Icon size={34} onPress={this.showMenu} name={'md-more'} style={styles.icon} />}
-                    >
-                   <MenuItem onPress={() => this.props.navigation.navigate('EditProfileSeller')&&this.hideMenu()}>Edit</MenuItem>
-                   <MenuItem onPress={() => this.islogout() &&this.hideMenu()}>Logout</MenuItem>
-                    </Menu>
-                    </View>
+                    <View style={{ flexDirection: 'row', width: '100%' }}>
+                        <TouchableOpacity style={{ marginTop: 20, alignItems: 'flex-start', flex: 1 }}>
+                            <Icon size={34} name={'md-arrow-back'} onPress={() => goBack()} style={styles.icon} />
+                        </TouchableOpacity>
+                        <View style={{ marginTop: 20, alignItems: 'flex-end', flex: 1 }}>
+                            <Menu
+                                ref={this.setMenuRef}
+                                button={<Icon size={34} onPress={this.showMenu} name={'md-more'} style={styles.icon} />}
+                            >
+                                <MenuItem onPress={() => this.props.navigation.navigate('EditProfileSeller', data) && this.hideMenu()}>Edit</MenuItem>
+                                <MenuItem onPress={() => this.islogout() && this.hideMenu()}>Logout</MenuItem>
+                            </Menu>
+                        </View>
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                        <Image style={styles.photo} source={{ uri: `${foto}` }} />
+                        <Image style={styles.photo} source={{ uri: `${this.props.navigation.getParam('foto')}` }} />
                         <View style={styles.layText}>
-                            <Text style={styles.nameUser}>{nama}</Text>
-                            <Text style={styles.email}>{email}</Text>
-                            <Text style={styles.hp}>{no_hp}</Text>
+                            <Text style={styles.nameUser}>{this.props.navigation.getParam('nama')}</Text>
+                            <Text style={styles.email}>{this.props.navigation.getParam('email')}</Text>
+                            <Text style={styles.hp}>{this.props.navigation.getParam('no_hp')}</Text>
                         </View>
                     </View>
                 </View>
@@ -73,7 +75,7 @@ export default class Profile extends Component {
                     <Text style={styles.textHistory}>Jualan Saya</Text>
                     <View style={styles.layMenu}>
                         <Text style={styles.number}>1</Text>
-                        <View style={{marginLeft:20}}>
+                        <View style={{ marginLeft: 20 }}>
                             <Text style={styles.menu}>{}</Text>
                             <Text style={styles.price}>Rp. 9000</Text>
                         </View>
