@@ -28,6 +28,7 @@ class Home extends Component {
 
   componentDidMount() {
     this.getLocation()
+    this.user()
   }
 
   getLocation() {
@@ -40,17 +41,14 @@ class Home extends Component {
   }
 
   user = () => {
-    firebase.database().ref('users/').on('value', (result) => {
+    firebase.database().ref('users/pedagang').on('value', (result) => {
       let data = result.val();
-      let buyer = 'pembeli'
       console.warn('data', data)
       console.warn('nama', this.state.name)
-      if (data.pembeli === buyer) {
-        buyer = data.pembeli
-      } else {
+      if (data !== '') {
         this.setState((prevState) => {
           return {
-            allCoor: [...prevState.allCoor, data.pedagang]
+            allCoor: [...prevState.allCoor, data]
           }
         })
       }
@@ -75,9 +73,9 @@ class Home extends Component {
   }
 
   updateToFirebase = () => {
-    const { name,dataUser } = this.state
+    const { name, dataUser } = this.state
     console.warn('utuk update', dataUser)
-    firebase.database().ref('/users/' + 'pembeli'+'/'+name).update({
+    firebase.database().ref('/users/' + 'pembeli' + '/' + name).update({
       username: dataUser.username,
       nama: dataUser.nama,
       photo: dataUser.foto,
@@ -88,6 +86,8 @@ class Home extends Component {
   }
 
   render() {
+    console.warn(this.state.data)
+
     const items = [
       { name: 'SAYUR', code: '#1abc9c' },
       { name: 'MINUMAN', code: '#2ecc71' },
@@ -109,6 +109,8 @@ class Home extends Component {
       }
     ]
     console.warn("alldata", this.state.allCoor)
+    console.log("alldata", this.state.allCoor)
+    console.warn("list", this.state.data)
     const alldatatoMap = this.state.allCoor
     const list = this.state.data
     return (
@@ -148,7 +150,7 @@ class Home extends Component {
               renderItem={({ item, index }) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() =>this.props.navigation.navigate('MapBuyer')}
+                  onPress={() => this.props.navigation.navigate('MapBuyer')}
                 >
                   <View
                     style={{
@@ -203,9 +205,15 @@ class Home extends Component {
                 <Text style={styles.textView}>Kategori</Text>
               </View>
               <View style={styles.textLihat}>
-                  < TouchableOpacity onPress={() => this.props.navigation.navigate('MapBuyer', alldatatoMap)}>
-                    <Text style={styles.textLink}>Lihat semua</Text>
-                     </TouchableOpacity>
+                {/* {
+                  alldatatoMap.map((apalah, index1) => {
+                    return (
+                      < TouchableOpacity key={index1} onPress={() => this.props.navigation.navigate('MapBuyer', apalah)}>
+                        <Text style={styles.textLink}>Lihat semua</Text>
+                      </TouchableOpacity>
+                    )
+                  })
+                } */}
               </View>
             </View>
             <FlatGrid
@@ -216,7 +224,7 @@ class Home extends Component {
               renderItem={({ item, index }) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() =>this.props.navigation.navigate('MapBuyer')}
+                  onPress={() => this.props.navigation.navigate('MapBuyer')}
                 >
                   <View
                     style={[

@@ -14,10 +14,11 @@ import geolocation from '@react-native-community/geolocation';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
 export class Maps extends Component {
-  constructor(){
-    super()
+  constructor(props){
+    super(props)
     this.state = {
-      isModalVisible: false
+      isModalVisible: false,
+      data: props.navigation.getParam('alldatatoMap')
     }
   }
 
@@ -64,6 +65,7 @@ export class Maps extends Component {
 
   render () {
     const { goBack } = this.props.navigation;
+    console.warn('Data map', this.state.data)
     return (
       <>
         <StatusBar

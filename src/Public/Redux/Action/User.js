@@ -4,10 +4,10 @@ import api from '../../../Config/api'
 export const PostRegisterPembeli = (data) => {
     return {
         type: 'POST_REGIST_PEMBELI',
-        payload: axios.post(`${api}register/pembeli`, data ,{
+        payload: axios.post(`${api}register/pembeli`, data, {
             headers: {
-            'chace' : 'pembeli',
-            'authorization' : 'gokel'
+                'chace': 'pembeli',
+                'authorization': 'gokel'
             }
         })
     }
@@ -41,6 +41,12 @@ export const getUserPedagang = (username) => {
     }
 }
 
+export const updateUserPembeli = (username, input) => {
+    return {
+        type: 'PATCH_PEMBELI',
+        payload: axios.patch(`${api}pembeli/${username}`, input)
+    }
+}
 export const getJajan = () => {
     return {
         type: 'GET_JAJAN',
