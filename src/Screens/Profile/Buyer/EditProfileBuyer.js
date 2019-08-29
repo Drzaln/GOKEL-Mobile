@@ -16,7 +16,6 @@ class Profile extends Component {
             fotobaru: null,
             username: props.navigation.getParam('username'),
             email: props.navigation.getParam('email'),
-            flag: ''
         }
     }
 
@@ -25,7 +24,7 @@ class Profile extends Component {
             noData: true
         }
         ImagePicker.showImagePicker(options, response => {
-            console.warn("response", response);
+            console.warn("response", response.uri);
             if (response.uri) {
                 this.setState({ fotobaru: response })
             }
@@ -50,10 +49,9 @@ class Profile extends Component {
                 nama: this.state.nama,
                 no_hp: this.state.no_hp,
                 foto: this.state.fotobaru.uri,
-                fotobaru: null,
                 username: this.state.username,
                 email: this.state.email,
-                flag: ''
+                
             }
 
             const username = this.state.username
@@ -77,10 +75,9 @@ class Profile extends Component {
                 nama: this.state.nama,
                 no_hp: this.state.no_hp,
                 foto: this.state.foto,
-                fotobaru: null,
                 username: this.state.username,
                 email: this.state.email,
-                flag: ''
+                
             }
 
             const username = this.state.username
@@ -88,17 +85,15 @@ class Profile extends Component {
             this.props.navigation.navigate('ProfileBuyer', item)
                 
             // this.setState({ flag: 'true' })
-
         }
-
-
     }
 
     render() {
 
-        console.warn(this.state.username)
+        console.warn('isi state edit', this.state)
 
-        const { foto, nama, no_hp, lokal, fotobaru } = this.state
+        const { foto, nama, no_hp, fotobaru } = this.state
+        // let data = { }
         return (
             <View style={styles.container}>
                 <TouchableOpacity onPress={this.handleChoosePhoto}>

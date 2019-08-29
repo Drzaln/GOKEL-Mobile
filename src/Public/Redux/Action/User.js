@@ -66,3 +66,10 @@ export const getJajan = () => {
         payload: axios.get(`${api}jajan`)
     }
 }
+
+export const updateUserPedagang = (username, input) => {
+    return {
+        type: 'PATCH_PEMBELI',
+        payload: axios.patch(`${api}pedagang/${username}`, input)
+    }
+}
