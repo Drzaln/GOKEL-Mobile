@@ -88,7 +88,6 @@ class ProfileBuyer extends Component {
                 <View style={styles.layHistory}>
                 <Text style={styles.textHistory}>Riwayat Pembelian</Text>
                 {this.props.detailTransaksi.map((item) => {
-                    // console.warn("transaksi", item.pedagang);
                 return(
                     <View style={styles.layMenu}>
                         {/* <Text style={styles.number}>1</Text> */}
@@ -120,7 +119,7 @@ const styles = StyleSheet.create({
     },
     layout: {
         width: '100%',
-        height: '45%',
+        height: '30%',
         backgroundColor: '#1abc9c',
         paddingHorizontal: '10%',
         borderBottomLeftRadius: 20,

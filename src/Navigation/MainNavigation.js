@@ -109,7 +109,7 @@ export default createAppContainer(
   createSwitchNavigator(
     {
         // SplashScreen: SplashScreen,
-        IntroSlider: IntroSlider,                               
+        IntroSlider: IntroSlider,
         Login: Login,
         ChooseRole: ChooseRole,
         Chat: Chat,
@@ -120,7 +120,7 @@ export default createAppContainer(
         HomeSeller: SellerNavigator
     },
     {
-      initialRouteName: 'IntroSlider'
+      initialRouteName: 'Login'
     }
   )
 )
