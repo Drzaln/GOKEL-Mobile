@@ -10,45 +10,82 @@ import {
 import { FAB } from 'react-native-paper'
 import Modal from 'react-native-modal'
 import firebase from 'react-native-firebase'
-import geolocation from '@react-native-community/geolocation';
+import geolocation from '@react-native-community/geolocation'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
 export class Maps extends Component {
-  constructor(props){
+  constructor (props) {
     super(props)
     this.state = {
       isModalVisible: false,
-      data: props.navigation.getParam('alldatatoMap')
+      idKategori: this.props.navigation.getParam('idKategori'),
+      users: [],
     }
   }
 
-  componentDidMount() {
+  getData = () => {
+    firebase
+      .database()
+      .ref('users/pedagang')
+      .on('child_added', data => {
+        let user = data.val()
+        user.username = data.key
+        if (user.idCat != this.state.idKategori) {
+          this.setState(prevData => {
+            return {
+              users: [...prevData.users, user]
+            }
+          })
+        }
+      })
+  }
+
+  componentDidMount () {
+    this.getData()
     this.getLocation()
   }
 
-  getLocation() {
-    this.watchID = geolocation.getCurrentPosition((position) => {
-      let region = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        latitudeDelta: 0.00922 * 1.5,
-        longitudeDelta: 0.00421 * 1.5
-      }
-      this.onRegionChange(region, region.latitude, region.longitude);
-    }, (error) => console.log(error));
+  getLocation () {
+    this.watchID = geolocation.getCurrentPosition(
+      position => {
+        let region = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: 0.00922 * 1.5,
+          longitudeDelta: 0.00421 * 1.5
+        }
+        this.onRegionChange(region, region.latitude, region.longitude)
+      },
+      error => console.log(error)
+    )
   }
 
-  onRegionChange(region, lastLat, lastLong) {
+  onRegionChange (region, lastLat, lastLong) {
     this.setState({
       mapRegion: region,
       // // If there are no new values set the current ones
       lastLat: lastLat || this.state.lastLat,
       lastLong: lastLong || this.state.lastLong
-    });
+    })
   }
 
   toggleModal = () => {
-    this.setState({ isModalVisible: !this.state.isModalVisible })
+    this.setState({
+      isModalVisible: !this.state.isModalVisible
+    })
+  }
+
+  modalOut = (lat, long) => {
+    let region = {
+      latitude: lat,
+      longitude: long,
+      latitudeDelta: 0.00922 * 1,
+      longitudeDelta: 0.00421 * 1
+    }
+    this.setState({
+      isModalVisible: !this.state.isModalVisible,
+      mapRegion: region
+    })
   }
 
   handleScrollTo = p => {
@@ -64,8 +101,7 @@ export class Maps extends Component {
   }
 
   render () {
-    const { goBack } = this.props.navigation;
-    console.warn('Data map', this.state.data)
+    const { goBack } = this.props.navigation
     return (
       <>
         <StatusBar
@@ -84,59 +120,77 @@ export class Maps extends Component {
             style={styles.map}
             region={this.state.mapRegion}
           >
-            <Marker
-              onPress={() => this.toggleModal()}
-              coordinate={{
-                latitude: -7.755991,
-                longitude: 110.369858
-              }}
-            />
+            {this.state.users.map((marker, index) => {
+              return (
+                <Marker
+                  key={index}
+                  onPress={() =>
+                    this.modalOut(marker.latitude, marker.longitude)
+                  }
+                  coordinate={{
+                    latitude: marker.latitude,
+                    longitude: marker.longitude
+                  }}
+                />
+              )
+            })}
           </MapView>
-          <Modal
-            onSwipeComplete={() => this.toggleModal()}
-            onBackdropPress={() => this.toggleModal()}
-            isVisible={this.state.isModalVisible}
-            swipeDirection='down'
-            scrollTo={this.handleScrollTo}
-            scrollOffset={this.state.scrollOffset}
-            scrollOffsetMax={400 - 300}
-            backdropOpacity={0.3}
-            style={styles.bottomModal}
-          >
-            <View style={styles.scrollableModal}>
-              <View style={{ height: '15%' }} />
-              <View style={styles.scrollableModalContent1}>
-                <View style={{ flexDirection: 'row' }}>
-                  <View style={{ marginRight: 16 }}>
-                    <Image
-                      source={{
-                        uri: 'https://randomuser.me/api/portraits/men/76.jpg'
-                      }}
-                      style={styles.profil}
-                    />
-                  </View>
-                  <View style={{ flex: 2 }}>
-                    <Text style={styles.fontNama}>Siomay Kang Ujay</Text>
-                    <Text style={styles.fontPorsi}>Sisa ± 30 Porsi </Text>
-                    <Text style={styles.fontHarga}>Rp 5000</Text>
-                    <TouchableOpacity onPress={() => alert('kepencet')}>
-                      <View style={styles.buttonBeli}>
-                        <Text style={styles.fontBeli}>BELI</Text>
+          {this.state.users.map((marker, index) => {
+            return (
+              <Modal
+                key={index}
+                onSwipeComplete={() => this.toggleModal()}
+                onBackdropPress={() => this.toggleModal()}
+                isVisible={this.state.isModalVisible}
+                swipeDirection='down'
+                scrollTo={this.handleScrollTo}
+                scrollOffset={this.state.scrollOffset}
+                scrollOffsetMax={400 - 300}
+                backdropOpacity={0.1}
+                style={styles.bottomModal}
+              >
+                <View style={styles.scrollableModal}>
+                  <View style={{ height: '15%' }} />
+                  <View style={styles.scrollableModalContent1}>
+                    <View style={{ flexDirection: 'row' }}>
+                      <View style={{ marginRight: 16 }}>
+                        <Image
+                          source={{
+                            uri: marker.foto
+                          }}
+                          style={styles.profil}
+                        />
                       </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Chat')}>
-                      <View style={styles.buttonPesan}>
-                        <Text style={styles.fontPesan}>KIRIM PESAN</Text>
+                      <View style={{ flex: 2 }}>
+                        <Text style={styles.fontNama}>{marker.nama}</Text>
+                        <Text style={styles.fontPorsi}>Sisa ± 30 Porsi </Text>
+                        <Text style={styles.fontHarga}>Rp 5000</Text>
+                        <TouchableOpacity onPress={() => alert('kepencet')}>
+                          <View style={styles.buttonBeli}>
+                            <Text style={styles.fontBeli}>BELI</Text>
+                          </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.props.navigation.navigate('Chat', {
+                              username: marker.username
+                            })
+                          }
+                        >
+                          <View style={styles.buttonPesan}>
+                            <Text style={styles.fontPesan}>KIRIM PESAN</Text>
+                          </View>
+                        </TouchableOpacity>
                       </View>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.viewBuletan}>
-                    <View style={styles.buletan} />
+                      <View style={styles.viewBuletan}>
+                        <View style={styles.buletan} />
+                      </View>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </View>
-          </Modal>
+              </Modal>
+            )
+          })}
           <FAB
             color='#00ADB5'
             style={styles.fabBack}

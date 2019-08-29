@@ -11,12 +11,12 @@ import {
 } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid'
 import firebase from 'react-native-firebase'
-import geolocation from '@react-native-community/geolocation';
+import geolocation from '@react-native-community/geolocation'
 import { connect } from 'react-redux'
 import { getUserPembeli } from '../../../Public/Redux/Action/User'
 
 class Home extends Component {
-  constructor() {
+  constructor () {
     super()
     this.state = {
       name: '',
@@ -26,21 +26,22 @@ class Home extends Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.getLocation()
     this.user()
   }
 
-  getLocation() {
-    this.watchID = geolocation.getCurrentPosition((position) => {
+  getLocation () {
+    this.watchID = geolocation.getCurrentPosition(position => {
       this.setState({
         latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
+        longitude: position.coords.longitude
       })
     })
   }
 
   user = () => {
+<<<<<<< HEAD
     firebase.database().ref('users/pedagang').on('value', (result) => {
       let data = result.val();
       console.warn('data', data)
@@ -53,28 +54,47 @@ class Home extends Component {
         })
       }
     });
+=======
+    firebase
+      .database()
+      .ref('users/')
+      .on('value', result => {
+        let data = result.val()
+        let buyer = 'pembeli'
+        console.warn('data', data)
+        console.warn('nama', this.state.name)
+        if (data.pembeli === buyer) {
+          buyer = data.pembeli
+        } else {
+          this.setState(prevState => {
+            return {
+              allCoor: [...prevState.allCoor, data.pedagang]
+            }
+          })
+        }
+      })
+>>>>>>> 74f7753c92aaa215813c06ef24e44815e412bd88
   }
 
-  componentWillMount() {
+  componentWillMount () {
     AsyncStorage.getItem('Username', (err, result) => {
       if (result) {
         this.setState({ name: result })
       }
-      this.props.dispatch(getUserPembeli(this.state.name))
-        .then((result) => {
-          this.setState({
-            data: result.value.data.result,
-            dataUser: result.value.data.result[0],
-          })
-          this.updateToFirebase()
+      this.props.dispatch(getUserPembeli(this.state.name)).then(result => {
+        this.setState({
+          data: result.value.data.result,
+          dataUser: result.value.data.result[0]
         })
-
+        this.updateToFirebase()
+      })
     })
   }
 
   updateToFirebase = () => {
     const { name, dataUser } = this.state
     console.warn('utuk update', dataUser)
+<<<<<<< HEAD
     firebase.database().ref('/users/' + 'pembeli' + '/' + name).update({
       username: dataUser.username,
       nama: dataUser.nama,
@@ -83,16 +103,28 @@ class Home extends Component {
       longitude: this.state.longitude
     })
 
+=======
+    firebase
+      .database()
+      .ref('/users/' + 'pembeli' + '/' + name)
+      .update({
+        username: dataUser.username,
+        nama: dataUser.nama,
+        photo: dataUser.foto,
+        latitude: this.state.latitude,
+        longitude: this.state.longitude
+      })
+>>>>>>> 74f7753c92aaa215813c06ef24e44815e412bd88
   }
 
-  render() {
+  render () {
     console.warn(this.state.data)
 
     const items = [
-      { name: 'SAYUR', code: '#1abc9c' },
-      { name: 'MINUMAN', code: '#2ecc71' },
-      { name: 'JAJANAN', code: '#3498db' },
-      { name: 'MAKANAN', code: '#9b59b6' }
+      { name: 'SAYUR', code: '#1abc9c', id: 4 },
+      { name: 'MINUMAN', code: '#2ecc71', id: 2 },
+      { name: 'SNACK', code: '#3498db', id: 3 },
+      { name: 'MAKANAN', code: '#9b59b6', id: 1 }
     ]
     const jualan = [
       {
@@ -108,11 +140,18 @@ class Home extends Component {
           'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fkawuloalitox.files.wordpress.com%2F2009%2F10%2Fsate-ayam.png&f=1'
       }
     ]
+<<<<<<< HEAD
     console.warn("alldata", this.state.allCoor)
     console.log("alldata", this.state.allCoor)
     console.warn("list", this.state.data)
     const alldatatoMap = this.state.allCoor
     const list = this.state.data
+=======
+    console.warn('alldata', this.state.allCoor)
+    const alldatatoMap = this.state.allCoor
+    const list = this.state.data
+    // list.push(this.state.name)
+>>>>>>> 74f7753c92aaa215813c06ef24e44815e412bd88
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
@@ -123,21 +162,24 @@ class Home extends Component {
                 <Text style={styles.fontBold}>Halo, {this.state.name}</Text>
               </View>
               <View>
-                {
-                  list.map((item, index) => {
-                    console.warn("item", item)
-                    return (
-                      <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('ProfileBuyer', item)}>
-                        <Image
-                          source={{
-                            uri: `${item.foto}`
-                          }}
-                          style={styles.profil}
-                        />
-                      </TouchableOpacity>
-                    )
-                  })
-                }
+                {list.map((item, index) => {
+                  console.warn('item', item)
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() =>
+                        this.props.navigation.navigate('ProfileBuyer', item)
+                      }
+                    >
+                      <Image
+                        source={{
+                          uri: `${item.foto}`
+                        }}
+                        style={styles.profil}
+                      />
+                    </TouchableOpacity>
+                  )
+                })}
               </View>
             </View>
           </View>
@@ -205,6 +247,7 @@ class Home extends Component {
                 <Text style={styles.textView}>Kategori</Text>
               </View>
               <View style={styles.textLihat}>
+<<<<<<< HEAD
                 {/* {
                   alldatatoMap.map((apalah, index1) => {
                     return (
@@ -214,6 +257,15 @@ class Home extends Component {
                     )
                   })
                 } */}
+=======
+                <TouchableOpacity
+                  onPress={() =>
+                    this.props.navigation.navigate('MapBuyer', alldatatoMap)
+                  }
+                >
+                  <Text style={styles.textLink}>Lihat semua</Text>
+                </TouchableOpacity>
+>>>>>>> 74f7753c92aaa215813c06ef24e44815e412bd88
               </View>
             </View>
             <FlatGrid
@@ -224,7 +276,13 @@ class Home extends Component {
               renderItem={({ item, index }) => (
                 <TouchableOpacity
                   key={index}
+<<<<<<< HEAD
                   onPress={() => this.props.navigation.navigate('MapBuyer')}
+=======
+                  onPress={() =>
+                    this.props.navigation.navigate('MapBuyer', { idKategori: item.id })
+                  }
+>>>>>>> 74f7753c92aaa215813c06ef24e44815e412bd88
                 >
                   <View
                     style={[

@@ -54,10 +54,19 @@ class Register extends Component {
     })
     if (email === '' || nama === '' || username === '' || no_hp === '' || password === '' ) {
       alert('Lengkapi Form Yang Tersedia!!!')
+      this.setState({
+        spinner: false
+      })
     } else if(idCat === 0){
       alert('Masukkan Kategori Jualan Anda')
+      this.setState({
+        spinner: false
+      })
     } else if(idJajan === 0){
       alert('Masukkan Jualan Anda')
+      this.setState({
+        spinner: false
+      })
     } else {
       this.props.dispatch(PostRegisterPedagang(data))
         .then((Response) => {
