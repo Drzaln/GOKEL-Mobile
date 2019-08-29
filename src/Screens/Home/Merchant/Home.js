@@ -15,7 +15,7 @@ import firebase from 'react-native-firebase'
 import Spinner from 'react-native-loading-spinner-overlay'
 import geolocation from '@react-native-community/geolocation';
 import { connect } from 'react-redux'
-import { getUserPedagang } from '../../../Public/Redux/Action/User'
+import { getUserPedagang, updateSaldo } from '../../../Public/Redux/Action/User'
 
 class HomeSeller extends Component {
   constructor(props) {
@@ -28,7 +28,8 @@ class HomeSeller extends Component {
       dataUser: '',
       saldo: 0,
       saldoBaru: 0,
-      saldoTampil: 0
+      saldoTampil: 0,
+      username: '',
     }
   }
 
@@ -42,7 +43,11 @@ class HomeSeller extends Component {
       }
       this.props.dispatch(getUserPedagang(this.state.name))
         .then((result) => {
-          console.warn('data', result)
+          console.warn('data', result.value.data.result[0])
+         this.setState({
+          saldoTampil: result.value.data.result[0].saldo,
+          username: result.value.data.result[0].username
+         })
           this.setState({
             data: result.value.data.result,
             dataUser: result.value.data.result[0],
@@ -50,13 +55,13 @@ class HomeSeller extends Component {
           })
           this.updateToFirebase()
         })
-
+        
     })
   }
 
   componentDidMount() {
     this.getLocation()
-    const saldoTotal = Number(this.state.saldo) + Number(this.state.saldoBaru)
+    const saldoTotal = Number(this.state.saldoTampil) + Number(this.state.saldoBaru)
     this.setState({
       saldoTampil: saldoTotal
     })
@@ -70,15 +75,6 @@ class HomeSeller extends Component {
       })
     })
   }
-
-  // mapping() {
-  //   this.state.data.map(item => {
-  //     console.warn("item", item)
-  //     this.setState({
-  //       dataUser: item
-  //     })
-  //   })
-  // }
 
   state = {
     isModalVisible: false
@@ -124,13 +120,14 @@ class HomeSeller extends Component {
   }
 
   submitSaldo = () => {
-    const saldoTotal = Number(this.state.saldo) + Number(this.state.saldoBaru)
-
+    const saldoTotal = Number(this.state.saldoTampil) + Number(this.state.saldoBaru)
+    this.props.dispatch(updateSaldo(this.state.username, saldoTotal))
     this.setState({
       saldo: saldoTotal,
       saldoTampil: saldoTotal,
       isModalVisible: !this.state.isModalVisible
     })
+    
   }
 
   render() {
@@ -198,7 +195,6 @@ class HomeSeller extends Component {
                   placeholder='Harga...'
                   placeholderTextColor='grey'
                   clearTextOnFocus
-                 
                 />
               </View>
               <View style={styles.textField}>
@@ -286,7 +282,8 @@ class HomeSeller extends Component {
 
 const mapStateToProps = state => {
   return {
-    dataPembeli: state.user.detailPembeli
+    dataPembeli: state.user.detailPembeli,
+    updateSaldo: state.user.updateSaldo
   }
 }
 export default connect(mapStateToProps)(HomeSeller)

@@ -3,9 +3,10 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, StatusBa
 import Icon from 'react-native-vector-icons/Ionicons'
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay'
+import { DetailTransaksiPembeli } from '../../../Public/Redux/Action/Transaksi'
+import { connect } from 'react-redux'
 
-
-export default class Profile extends Component {
+class ProfileBuyer extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -38,6 +39,15 @@ export default class Profile extends Component {
         this.props.navigation.navigate('Login')
     }
 
+    componentDidMount = async () => {
+        const Username = await AsyncStorage.getItem('Username')       
+        await this.props.dispatch(DetailTransaksiPembeli(Username))
+        .then((res) => {
+            console.warn(res);
+            console.warn(this.props.detailTransaksi);
+        }) 
+    }
+
     render() {
 
         
@@ -47,6 +57,7 @@ export default class Profile extends Component {
         const { goBack } = this.props.navigation;
         const { foto, nama, email, no_hp, username } = this.state
         const data = { foto, nama, email, no_hp, username }
+        
         return (
             <View>
                 <StatusBar backgroundColor="#1abc9c" barStyle="dark-content" />
@@ -75,19 +86,33 @@ export default class Profile extends Component {
                     </View>
                 </View>
                 <View style={styles.layHistory}>
-                    <Text style={styles.textHistory}>History</Text>
+                <Text style={styles.textHistory}>Riwayat Pembelian</Text>
+                {this.props.detailTransaksi.map((item) => {
+                    // console.warn("transaksi", item.pedagang);
+                return(
                     <View style={styles.layMenu}>
-                        <Text style={styles.number}>1</Text>
+                        {/* <Text style={styles.number}>1</Text> */}
                         <View style={{ marginLeft: 20 }}>
-                            <Text style={styles.menu}>Name of Menu</Text>
-                            <Text style={styles.price}>Rp. 9000</Text>
+                            <Text style={styles.menu}>Nama Penjual: {item.pedagang}</Text>
+                            <Text style={styles.price}>Total Harga: {item.total_harga}</Text>
+                            <Text style={styles.price}>Jumlah Barang: {item.jumlah}</Text>
                         </View>
                     </View>
+                    )
+                })}
                 </View>
             </View>
-        )
+        )           
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        detailTransaksi: state.transaksi.detailTransaksi
+    }
+}
+
+export default connect(mapStateToProps)(ProfileBuyer)
 
 const styles = StyleSheet.create({
     container: {
