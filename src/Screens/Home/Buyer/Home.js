@@ -28,6 +28,7 @@ class Home extends Component {
 
   componentDidMount () {
     this.getLocation()
+    this.user()
   }
 
   getLocation () {

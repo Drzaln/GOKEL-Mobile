@@ -5,15 +5,35 @@ import {
   StatusBar,
   Image,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  AsyncStorage
 } from 'react-native'
 import { FAB } from 'react-native-paper'
 import geolocation from '@react-native-community/geolocation';
+import firebase from 'react-native-firebase'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
 export class Maps extends Component {
-  componentDidMount() {
-    this.getLocation()
+  constructor() {
+    super()
+    this.state = {
+      longitude: 0,
+      latitude: 0
+    }
+    this.apagitu()
+  }
+
+  apagitu () {
+    setInterval(() => this.getLocation(), 10000);
+    setInterval(() => this.updateLocation(), 10000);
+  }
+
+  updateLocation = async () => {
+    let myname = await AsyncStorage.getItem('Username')
+    console.warn("myname", myname)
+    console.warn("latitude", this.state.latitude)
+    console.warn("lon gitude", this.state.longitude)
+    firebase.database().ref('/users/pedagang/' + myname).update({ latitude: this.state.latitude, longitude: this.state.longitude })
   }
 
   getLocation() {
@@ -24,20 +44,22 @@ export class Maps extends Component {
         latitudeDelta: 0.00922 * 1.5,
         longitudeDelta: 0.00421 * 1.5
       }
+
       this.onRegionChange(region, region.latitude, region.longitude);
     }, (error) => console.log(error));
   }
 
   onRegionChange(region, lastLat, lastLong) {
+    console.warn("region", region)
     this.setState({
       mapRegion: region,
       // // If there are no new values set the current ones
-      lastLat: lastLat || this.state.lastLat,
-      lastLong: lastLong || this.state.lastLong
+      latitude: lastLat || this.state.lastLat,
+      longitude: lastLong || this.state.lastLong
     });
   }
 
-  render () {
+  render() {
     const { goBack } = this.props.navigation;
     return (
       <>
@@ -82,7 +104,7 @@ export class Maps extends Component {
             color='#00ADB5'
             style={styles.fabMes}
             icon='message'
-            onPress={() => this.props.navigation.navigate('Chat')}
+            onPress={() => this.props.navigation.navigate('Chatlist')}
           />
         </View>
       </>
@@ -116,7 +138,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'white',
     color: '#00ADB5',
-    borderRadius:16,
+    borderRadius: 16,
   },
   bottomModal: {
     justifyContent: 'flex-end',
