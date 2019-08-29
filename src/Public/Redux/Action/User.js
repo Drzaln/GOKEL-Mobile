@@ -44,7 +44,12 @@ export const getUserPedagang = (username) => {
 export const getPedagangByCategory = (kategori) => {
     return{
         type:'GET_PEDAGANG_KATEGORI',
-        payload: axios.get(`${api}pedagang/kategori/${kategori}`)
+        payload: axios.get(`${api}pedagang/kategori/${kategori}`,{
+            headers: {
+                'chace': 'pembeli',
+                'authorization': 'gokel'
+            }
+        })
     }
 }
 
@@ -65,14 +70,12 @@ export const getJajan = () => {
 export const updateSaldo = (username, data) => {
     return {
         type: 'PATCH_SALDO',
-        payload: axios.patch(`${api}updatesaldo/${username}`, { saldo: data })
-    }
-}
-
-export const updateStock = (username, data) => {
-    return {
-        type: 'PATCH_STOCK',
-        payload: axios.patch(`${api}updatestock/${username}`, data )
+        payload: axios.patch(`${api}updatesaldo/${username}`, { saldo: data }, 
+            {
+                headers: {
+                'authorization': 'gokel'
+            }
+        })
     }
 }
  

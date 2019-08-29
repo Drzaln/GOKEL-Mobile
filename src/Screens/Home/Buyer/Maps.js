@@ -12,12 +12,13 @@ import { FAB } from 'react-native-paper'
 import Modal from 'react-native-modal'
 import firebase from 'react-native-firebase'
 import geolocation from '@react-native-community/geolocation'
+import Icon from 'react-native-vector-icons/Ionicons'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 import { PostTransaksi } from '../../../Public/Redux/Action/Transaksi'
 import { connect } from 'react-redux'
 
 export class Maps extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       isModalVisible: false,
@@ -48,12 +49,12 @@ export class Maps extends Component {
       })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.getData()
     this.getLocation()
   }
 
-  getLocation () {
+  getLocation() {
     this.watchID = geolocation.getCurrentPosition(
       position => {
         let region = {
@@ -68,7 +69,7 @@ export class Maps extends Component {
     )
   }
 
-  onRegionChange (region, lastLat, lastLong) {
+  onRegionChange(region, lastLat, lastLong) {
     this.setState({
       mapRegion: region,
       // // If there are no new values set the current ones
@@ -118,7 +119,7 @@ export class Maps extends Component {
     const dataUsername = await AsyncStorage.getItem('Username')
     const data = {
       username_pembeli: dataUsername,
-      username_pedagang: this.state.nama
+      username_pedagang: this.state.username
     }
     this.props
       .dispatch(PostTransaksi(data))
@@ -126,7 +127,7 @@ export class Maps extends Component {
         this.toggleModal()
         this.props.navigation.navigate('Payment', {
           username_pembeli: dataUsername,
-          username_pedagang: this.state.nama
+          username_pedagang: this.state.username
         })
       })
       .catch(() => {
@@ -134,7 +135,8 @@ export class Maps extends Component {
       })
   }
 
-  render () {
+  render() {
+    console.warn("users", this.state.users)
     const { goBack } = this.props.navigation
     return (
       <>
@@ -163,7 +165,28 @@ export class Maps extends Component {
                     latitude: marker.latitude,
                     longitude: marker.longitude
                   }}
-                />
+                >
+                  {
+                    this.state.idKategori === 1 || marker.idCat === 1
+                    ?
+                    <Icon size={30} name={'md-pin'} color={'red'} style={styles.icon} />
+                    :
+                    this.state.idKategori === 2 || marker.idCat === 2
+                    ?
+                    <Icon size={30} name={'md-pin'} color={'blue'} style={styles.icon} />
+                    :
+                    this.state.idKategori === 3 || marker.idCat === 3
+                    ?
+                    <Icon size={30} name={'md-pin'} color={'yellow'} style={styles.icon} />
+                    :
+                    this.state.idKategori === 4 || marker.idCat === 4
+                    ?
+                    <Icon size={30} name={'md-pin'} color={'green'} style={styles.icon} />
+                    :
+                    <Icon size={30} name={'md-pin'} style={styles.icon} />
+                  }
+                  
+                </Marker>
               )
             })}
           </MapView>
