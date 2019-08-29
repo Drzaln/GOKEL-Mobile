@@ -25,8 +25,8 @@ export class Chat extends Component {
     super(props)
     this.state = {
       name: 'Siomay Kang Ucay',
-      uid: 1,
-      myuid: 2,
+      uid: 'tai',
+      myuid: 'asu',
       role: '',
       myname: 'Jakun',
       avatar: '',
@@ -36,22 +36,18 @@ export class Chat extends Component {
       myUsername: '',
       username: this.props.navigation.getParam('username')
     }
-    AsyncStorage.getItem('Role', (error, result) => {
-      this.setState({
-        role: result
-      })
-    })
-    AsyncStorage.getItem('Username', (error, result) => {
-      this.setState({
-        myUsername: result
-      })
-    })
   }
 
   db = firebase.database()
 
-  async componentDidMount () {
-    await this.db
+  componentDidMount = async() => {
+    const datarole  = await AsyncStorage.getItem('Role')
+    const dataUsername = await AsyncStorage.getItem('Username')
+    this.setState({
+      myUsername : dataUsername,
+      role:datarole
+    })
+    this.db
       .ref('messages')
       .child(this.state.myUsername)
       .child(this.state.username)
@@ -200,7 +196,7 @@ export class Chat extends Component {
               />
             </TouchableOpacity>
             <View style={styles.headerLeft}>
-              <Text style={styles.name}>Siomay Kang Ucay</Text>
+              <Text style={styles.name}>{this.state.username}</Text>
             </View>
           </View>
           <GiftedChat
