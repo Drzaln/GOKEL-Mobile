@@ -96,7 +96,7 @@ export class Maps extends Component {
       nama: marker.nama,
       username: marker.username,
       foto: marker.foto,
-      porsi: marker.stok,
+      porsi: marker.stock,
       harga: marker.harga
     })
   }
@@ -135,6 +135,7 @@ export class Maps extends Component {
   }
 
   render () {
+    console.warn('stok',this.state.porsi);
     const { goBack } = this.props.navigation
     return (
       <>
@@ -192,8 +193,9 @@ export class Maps extends Component {
                   </View>
                   <View style={{ flex: 2 }}>
                     <Text style={styles.fontNama}>{this.state.nama}</Text>
-                    <Text style={styles.fontPorsi}>Sisa ± 30 Porsi </Text>
-                    <Text style={styles.fontHarga}>Rp 5000</Text>
+                    <Text style={styles.fontPorsi}>Sisa ± {this.state.porsi} Porsi </Text>
+                    <Text>Minimum Pembelian:</Text>
+                    <Text style={styles.fontHarga}>Rp {this.state.harga}</Text>
                     <TouchableOpacity onPress={() => this.keBeli()}>
                       <View style={styles.buttonBeli}>
                         <Text style={styles.fontBeli}>BELI</Text>
@@ -237,6 +239,9 @@ export class Maps extends Component {
     )
   }
 }
+
+
+
 
 const mapStateToProps = state => {
   return {

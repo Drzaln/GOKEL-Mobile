@@ -54,8 +54,7 @@ class HomeSeller extends Component {
             spinner: false
           })
           this.updateToFirebase()
-        })
-        
+      })        
     })
   }
 
@@ -127,8 +126,7 @@ class HomeSeller extends Component {
       saldoTampil: saldoTotal,
       isModalVisible: !this.state.isModalVisible
     })
-    
-  }
+n  }
 
   render() {
     return (
@@ -156,7 +154,7 @@ class HomeSeller extends Component {
                 return (
                   <View style={styles.viewNama}>
                     <View>
-                      <Text style={styles.fontBold}>Halo, {item.nama}</Text>
+                      <Text style={styles.fontBold}>Halo {item.nama}</Text>
                       <Text style={styles.fontSaldo}>
                         Saldo, Rp{' '}
                         {this.state.saldoTampil === 0 ? 0 : this.state.saldoTampil}

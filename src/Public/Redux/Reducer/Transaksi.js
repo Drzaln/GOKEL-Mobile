@@ -93,7 +93,7 @@ const transaksi = (state = initialState, action) => {
         isLoading: false,
         isRejected: false,
         isFulfilled: true,
-        detailTransaksi: action.payload.data
+        detailTransaksi: action.payload.data.result
       }
       case 'UPDATE_TRANSAKSI_PENDING':
       return {
