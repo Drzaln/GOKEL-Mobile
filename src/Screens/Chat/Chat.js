@@ -27,12 +27,18 @@ export class Chat extends Component {
       name: 'Siomay Kang Ucay',
       uid: 1,
       myuid: 2,
+      role: '',
       myname: 'Jakun',
       avatar: '',
       image: 'blabla',
       textMessage: '',
       messageList: []
     }
+    AsyncStorage.getItem('Role', (error, result) => {
+        this.setState({
+          role: result
+        })
+      })
   }
 
   db = firebase.database()
@@ -148,7 +154,19 @@ export class Chat extends Component {
     )
   }
 
+  checkRole= async() => {
+    const { role } = this.state
+    if (role === 'pembeli') {
+      this.props.navigation.navigate('MapBuyer')
+    } else if (role === 'pedagang') {
+      this.props.navigation.navigate('MapSeller')
+    } else {
+      alert("ada kesalah!!! Hubungi penyedia layanan")
+    }
+  }
+
   render () {
+    const { goBack } = this.props.navigation;
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
@@ -156,7 +174,7 @@ export class Chat extends Component {
           <View style={styles.header}>
             <TouchableOpacity
               style={styles.arrow}
-              onPress={() => this.props.navigation.navigate('Friend')}
+              onPress={() => this.checkRole()}
             >
               <Icon
                 size={30}

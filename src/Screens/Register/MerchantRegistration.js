@@ -13,8 +13,9 @@ import {
 } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import Icon from 'react-native-vector-icons/Ionicons'
+import firebase from 'react-native-firebase'
+import geolocation from '@react-native-community/geolocation';
 import { connect } from 'react-redux'
-import { Dropdown } from 'react-native-material-dropdown';
 import { PostRegisterPedagang } from '../../Public/Redux/Action/User'
 
 class Register extends Component {
@@ -28,51 +29,34 @@ class Register extends Component {
       no_hp: '',
       password: '',
       data: [],
-      allJajan: [],
       idJajan: 0,
       idCat: 0,
-      makanan: [],
-      minuman: [],
-      sayur: [],
-      snack: []
+      latitude: 0,
+      longitude: 0
+
     }
   }
-
-  // componentWillMount() {
-  //   this.props.dispatch(getJajan())
-  //     .then(result => {
-  //       // console.warn("result jajan", result.value.data.result)
-  //       let alldata = result.value.data.result
-  //       alldata.map(item => {
-  //         console.warn("item", item)
-  //         if (item.id_category === 1) {
-  //           this.setState({
-  //             makanan: item
-  //           })
-  //         } else if (item.id_category === 2) {
-  //           this.setState({
-  //             minuman: item
-  //           })
-  //         } else if (item.id_category === 3) {
-  //           this.setState({
-  //             sayur: item
-  //           })
-  //         } else if (item.id_category === 4) {
-  //           this.setState({
-  //             snack: item
-  //           })
-  //         }
-  //       })
-  //     })
-  // }
+  
+   componentDidMount() {
+    // await this.user()
+    this.watchID = geolocation.getCurrentPosition((position) => {
+      this.setState({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+    })
+  }
 
   newUserPedagang(data) {
-    const { email, nama, username, no_hp, password, id_category, id_jajan } = this.state
-    if (email === '' || nama === '' || username === '' || no_hp === '' || password === '') {
+    const { email, nama, username, no_hp, password, idCat, idJajan } = this.state
+    this.setState({
+      spinner: true
+    })
+    if (email === '' || nama === '' || username === '' || no_hp === '' || password === '' ) {
       alert('Lengkapi Form Yang Tersedia!!!')
-    } else if(id_category === 0){
+    } else if(idCat === 0){
       alert('Masukkan Kategori Jualan Anda')
-    } else if(id_jajan === 0){
+    } else if(idJajan === 0){
       alert('Masukkan Jualan Anda')
     } else {
       this.props.dispatch(PostRegisterPedagang(data))
@@ -93,25 +77,22 @@ class Register extends Component {
           );
         })
         .catch((error) => {
-          console.warn('error', error)
-          console.warn('error', this.props)
           alert(`Error , Email/Username telah digunakan`)
-            // this.setState({
-            //   email: '',
-            //   nama: '',
-            //   username: '',
-            //   no_hp: '',
-            //   password: '',
-            //   id_category: '0',
-            //   id_jajan: '0'
-            // })
+          this.setState({
+            email: '',
+            nama:'',
+            username: '',
+            no_hp: '',
+            password: '',
+            spinner: false
+          })
         })
 
     }
   }
 
   render() {
-    const { email, nama, username, no_hp, password, idCat, idJajan } = this.state
+    const { email, nama, username, no_hp, password, idCat, idJajan, latitude, longitude } = this.state
     const data = {
       email: email,
       nama: nama,
@@ -121,8 +102,8 @@ class Register extends Component {
       id_category: idCat,
       id_jajan: idJajan
     }
-    console.warn("id category",idCat)
-    console.warn("id", idJajan)
+    // console.warn("latitude",latitude)
+    // console.warn("longitufe", longitude)
 
     return (
       <View style={styles.container}>
@@ -131,8 +112,8 @@ class Register extends Component {
           textContent={'Loading...'}
           textStyle={{ color: '#fff' }}
         />
-        <View style={styles.layRegister}>
-          <Text style={styles.Register}>DAFTAR</Text>
+        <Text style={styles.Register}>DAFTAR</Text>
+        <ScrollView style={styles.layRegister}>
           <View style={styles.layInput}>
             <View style={{ width: '80%' }}>
               <View style={styles.flexRow}>
@@ -146,6 +127,7 @@ class Register extends Component {
                   onSubmitEditing={() => {
                     this.Username.focus()
                   }}
+                  value={this.state.nama}
                   onChangeText={nama => this.setState({ nama })}
                 />
               </View>
@@ -162,6 +144,7 @@ class Register extends Component {
                   onSubmitEditing={() => {
                     this.Email.focus()
                   }}
+                  value={this.state.username}
                   onChangeText={username => this.setState({ username })}
                 />
               </View>
@@ -178,6 +161,7 @@ class Register extends Component {
                   onSubmitEditing={() => {
                     this.NomorHp.focus()
                   }}
+                  value={this.state.email}
                   onChangeText={email => this.setState({ email })}
                 />
               </View>
@@ -193,6 +177,7 @@ class Register extends Component {
                   onSubmitEditing={() => {
                     this.Password.focus()
                   }}
+                  value={this.state.no_hp}
                   onChangeText={no_hp => this.setState({ no_hp })}
                 />
               </View>
@@ -205,6 +190,7 @@ class Register extends Component {
                   ref={input => {
                     this.Password = input
                   }}
+                  value={this.state.password}
                   onChangeText={password => this.setState({ password })}
                 />
               </View>
@@ -318,11 +304,11 @@ class Register extends Component {
               <Icon size={20} name={'md-arrow-forward'} style={styles.icon} />
             </TouchableOpacity>
           </View>
-        </View>
-        <View style={{ marginTop: 30, height: 40 }}>
+        </ScrollView>
+        <View style={{ height: 20, marginBottom:10 }}>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('Login')}
-            style={{ alignItems: 'flex-end', height: 30, marginTop: '30%', marginRight: '10%' }}
+            style={{ alignItems: 'flex-end', height: 20, marginRight: '10%' }}
           >
             <Text style={styles.Text}>
               Sudah punya akun?
@@ -353,15 +339,16 @@ const styles = StyleSheet.create({
     alignContent: 'center'
   },
   layRegister: {
-    height: '50%',
-    justifyContent: 'center'
+    height: '100%',
+    paddingBottom: 20
   },
   Register: {
     fontFamily: 'Montserrat-Bold',
     textAlign: 'left',
     fontSize: 32,
-    marginBottom: 30,
+    marginTop: '10%',
     marginLeft: 40,
+    marginBottom: '7%',
     color: '#004145'
   },
   layInput: {

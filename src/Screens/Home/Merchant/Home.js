@@ -6,33 +6,93 @@ import {
   StatusBar,
   TextInput,
   TouchableOpacity,
+  AsyncStorage,
   Image
 } from 'react-native'
 import { FAB } from 'react-native-paper'
 import Modal from 'react-native-modal'
+import firebase from 'react-native-firebase'
+import geolocation from '@react-native-community/geolocation';
+import { connect } from 'react-redux'
+import { getUserPedagang } from '../../../Public/Redux/Action/User'
 
-export class App extends Component {
-  constructor (props) {
+class HomeSeller extends Component {
+  constructor(props) {
     super(props)
     this.state = {
       harga: '',
       porsi: '',
-      saldo: 2000,
+      data: [],
+      dataUser: '',
+      saldo: 0,
       saldoBaru: 0,
       saldoTampil: 0
     }
   }
 
-  componentDidMount () {
-    const saldoTotal = Number(this.state.saldo) + Number(this.state.saldoBaru)
+  componentWillMount() {
+    AsyncStorage.getItem('Username', (err, result) => {
+      if (result) {
+        this.setState({ name: result })
+      }
+      this.props.dispatch(getUserPedagang(this.state.name))
+        .then((result) => {
+          console.warn('data', result)
+          this.setState({
+            data: result.value.data.result,
+            dataUser: result.value.data.result[0],
+          })
+          this.updateToFirebase()
+        })
 
+    })
+  }
+
+  componentDidMount() {
+    this.getLocation()
+    const saldoTotal = Number(this.state.saldo) + Number(this.state.saldoBaru)
     this.setState({
       saldoTampil: saldoTotal
     })
   }
 
+  getLocation() {
+    this.watchID = geolocation.getCurrentPosition((position) => {
+      this.setState({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+    })
+  }
+
+  // mapping() {
+  //   this.state.data.map(item => {
+  //     console.warn("item", item)
+  //     this.setState({
+  //       dataUser: item
+  //     })
+  //   })
+  // }
+
   state = {
     isModalVisible: false
+  }
+
+  updateToFirebase = () => {
+    const { name, dataUser } = this.state
+    console.warn('utuk update', dataUser)
+    firebase.database().ref('/users/' + 'pedagang' + '/' + name).update({
+      idCat: dataUser.id_category,
+      idJajan: dataUser.id_jajan,
+      saldo: dataUser.saldo,
+      stock: dataUser.stok,
+      harga: dataUser.harga,
+      username: dataUser.username,
+      nama: dataUser.nama,
+      latitude: this.state.latitude,
+      longitude: this.state.longitude
+    })
+
   }
 
   toggleModal = () => {
@@ -67,7 +127,7 @@ export class App extends Component {
     })
   }
 
-  render () {
+  render() {
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
@@ -82,27 +142,35 @@ export class App extends Component {
               icon='add'
               onPress={() => this.toggleModal()}
             />
-            <View style={styles.viewNama}>
-              <View>
-                <Text style={styles.fontBold}>Halo, Nama</Text>
-                <Text style={styles.fontSaldo}>
-                  Saldo, Rp{' '}
-                  {this.state.saldoTampil === 0 ? 0 : this.state.saldoTampil}
-                </Text>
-              </View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('ProfileBuyer')}
-                >
-                  <Image
-                    source={{
-                      uri: 'https://randomuser.me/api/portraits/men/76.jpg'
-                    }}
-                    style={styles.profil}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
+            {
+              this.state.data.map(item => {
+                console.warn("item", item)
+                return (
+                  <View style={styles.viewNama}>
+                    <View>
+                      <Text style={styles.fontBold}>Halo, {item.nama}</Text>
+                      <Text style={styles.fontSaldo}>
+                        Saldo, Rp{' '}
+                        {this.state.saldoTampil === 0 ? 0 : this.state.saldoTampil}
+                      </Text>
+                    </View>
+                    <View>
+
+                      <TouchableOpacity
+                        onPress={() => this.props.navigation.navigate('ProfileSeller', item)}
+                      >
+                        <Image
+                          source={{
+                            uri: `${item.foto}`
+                          }}
+                          style={styles.profil}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )
+              })
+            }
             <View
               style={{ flexDirection: 'row', justifyContent: 'space-around' }}
             >
@@ -145,7 +213,8 @@ export class App extends Component {
               >
                 <View style={styles.drumGedeLuar}>
                   <View style={styles.drumGedeDalem}>
-                    <Text
+                    <TouchableOpacity onPress={() =>this.props.navigation.navigate('MapSeller')}>
+                      <Text
                       style={{
                         fontFamily: 'Montserrat-Bold',
                         color: 'white',
@@ -155,6 +224,7 @@ export class App extends Component {
                     >
                       MULAI DAGANG
                     </Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -180,7 +250,7 @@ export class App extends Component {
                     autoFocus
                     style={styles.inputText}
                     blurOnSubmit={false}
-                    onChangeText={saldoBaru => this.setState({ saldoBaru }) }
+                    onChangeText={saldoBaru => this.setState({ saldoBaru })}
                     onSubmitEditing={() => this.submitSaldo()}
                     returnKeyType={'done'}
                     keyboardType='number-pad'
@@ -203,7 +273,12 @@ export class App extends Component {
   }
 }
 
-export default App
+const mapStateToProps = state => {
+  return {
+    dataPembeli: state.user.detailPembeli
+  }
+}
+export default connect(mapStateToProps)(HomeSeller)
 
 const styles = StyleSheet.create({
   fontSaldo: {
@@ -216,7 +291,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 32
+    marginBottom: 32,
+    width: '70%'
   },
   profil: {
     width: 80,

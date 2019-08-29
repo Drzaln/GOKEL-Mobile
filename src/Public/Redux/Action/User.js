@@ -34,12 +34,20 @@ export const getUserPembeli = (username) => {
     }
 }
 
+export const getUserPedagang = (username) => {
+    return {
+        type: 'GET_PEDAGANG',
+        payload: axios.get(`${api}pedagang/${username}`)
+    }
+}
+
 export const updateUserPembeli = (username, input) => {
     return {
         type: 'PATCH_PEMBELI',
         payload: axios.patch(`${api}pembeli/${username}`, input)
     }
 }
+
 export const getJajan = () => {
     return {
         type: 'GET_JAJAN',

@@ -1,115 +1,84 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, StatusBar } from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
+import Menu, { MenuItem } from 'react-native-material-menu';
 
 export default class Profile extends Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            foto: props.navigation.getParam('foto'),
+            nama:props.navigation.getParam('nama'),
+            email:props.navigation.getParam('email'),
+            no_hp:props.navigation.getParam('no_hp'),
+            idCat: props.navigation.getParam('id_category'),
+            idJajan: props.navigation.getParam('id_jajan'),
+            stock: props.navigation.getParam('stok'),
+            harga : props.navigation.getParam('harga')
+
+        }
+    }
+
+    _menu = null;
+
+    setMenuRef = ref => {
+        this._menu = ref;
+    };
+
+    showMenu = () => {
+        this._menu.show();
+    };
+
+    hideMenu = () => {
+        this._menu.hide();
+      };
+
+    islogout(){
+         AsyncStorage.clear()
+        alert('Berhasil Keluar')
+        this.props.navigation.navigate('Login')
+    }
+
     render() {
-        const jualan = [
-            {
-                nama_makanan: 'Siomay Kang Ucay',
-                bacol: '#003D40',
-                gambar:
-                    'https://proxy.duckduckgo.com/iu/?u=http%3A%2F%2Fsullezuka.files.wordpress.com%2F2012%2F01%2Fsiomay-bandung-2.png&f=1'
-            }
-        ]
+        const { goBack } = this.props.navigation;
+        const {foto, nama,email, no_hp} = this.state
         return (
-            <View style={styles.container}>
-                <View style={styles.layPhoto}>
-                    <TouchableOpacity onPress={() => alert('upload foto')}>
-                        <Image style={styles.photo} source={{ uri: 'https://randomuser.me/api/portraits/men/76.jpg' }} />
+            <View>
+                <StatusBar backgroundColor="#1abc9c" barStyle="dark-content" />
+                <View style={styles.layout}>
+                   <View style={{flexDirection: 'row', width: '100%'}}>
+                    <TouchableOpacity style={{marginTop:20, alignItems: 'flex-start', flex:1}}>
+                        <Icon size={34} name={'md-arrow-back'} onPress={() => goBack()} style={styles.icon} />
                     </TouchableOpacity>
-                    <View style={styles.layText}>
-                        <Text style={styles.nameUser}>Name of user</Text>
-                        <Text style={styles.role}>name of Role</Text>
+                    <View style={{marginTop:20, alignItems: 'flex-end', flex: 1}}>
+                    <Menu
+                     ref={this.setMenuRef}
+                     button={<Icon size={34} onPress={this.showMenu} name={'md-more'} style={styles.icon} />}
+                    >
+                   <MenuItem onPress={() => this.props.navigation.navigate('EditProfileSeller')&&this.hideMenu()}>Edit</MenuItem>
+                   <MenuItem onPress={() => this.islogout() &&this.hideMenu()}>Logout</MenuItem>
+                    </Menu>
+                    </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                        <Image style={styles.photo} source={{ uri: `${foto}` }} />
+                        <View style={styles.layText}>
+                            <Text style={styles.nameUser}>{nama}</Text>
+                            <Text style={styles.email}>{email}</Text>
+                            <Text style={styles.hp}>{no_hp}</Text>
+                        </View>
                     </View>
                 </View>
-
-
-                <Text
-                    style={{
-                        marginLeft: 10,
-                        marginTop: 10,
-                        fontFamily: 'Montserrat',
-                        color: '#00ACB6',
-                        fontSize: 14
-                    }}>
-                    Daganganmu :
-                </Text>
-                <View style={{
-                    flexDirection: 'row'
-                }}>
-                    <FlatList
-                        showsHorizontalScrollIndicator={false}
-                        horizontal
-                        data={jualan}
-                        renderItem={({ item, index }) => (
-                            <TouchableOpacity
-                                key={index}
-                                onPress={() => this.props.navigation.navigate('EditPrice')}
-                            >
-                                <View
-                                    style={{
-                                        width: 200,
-                                        height: 200,
-                                        borderRadius: 16,
-                                        marginLeft: 10,
-                                        elevation: 4,
-                                        marginBottom: 32,
-                                        marginTop: 8,
-                                        padding: 16,
-                                        backgroundColor: item.bacol
-                                    }}
-                                >
-                                    <View
-                                        style={{
-                                            flexDirection: 'column',
-                                            // justifyContent: 'space-between'
-                                        }}
-                                    >
-                                        <View style={{
-                                            // justifyContent: 'flex-end',
-                                            alignSelf: 'flex-end'
-                                        }}>
-                                            <Image
-                                                style={{ width: 120, height: 75, }}
-                                                source={{ uri: item.gambar }}
-                                            />
-                                        </View>
-                                        <View >
-                                            <Text
-                                                style={{
-                                                    fontFamily: 'Montserrat-Bold',
-                                                    color: '#FFC300',
-                                                    fontSize: 16
-                                                }}
-                                            >
-                                                {item.nama_makanan}
-                                            </Text>
-                                            <Text style={{
-                                                fontFamily: 'Montserrat-Bold',
-                                                color: '#00ACB6',
-                                                fontSize: 12
-                                            }}>
-                                                30 porsi
-                                        </Text>
-                                            <Text style={{
-                                                fontFamily: 'Montserrat-Bold',
-                                                color: '#007980',
-                                                fontSize: 15
-                                            }}>
-                                                Rp. 5000
-                                        </Text>
-                                        </View>
-
-                                    </View>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                    />
-
+                <View style={styles.layHistory}>
+                    <Text style={styles.textHistory}>Jualan Saya</Text>
+                    <View style={styles.layMenu}>
+                        <Text style={styles.number}>1</Text>
+                        <View style={{marginLeft:20}}>
+                            <Text style={styles.menu}>{}</Text>
+                            <Text style={styles.price}>Rp. 9000</Text>
+                        </View>
+                    </View>
                 </View>
-                <TouchableOpacity style={styles.butEdit} onPress={() => this.props.navigation.navigate('EditProfileUser')}>
-                    <Text style={styles.textEdit}>Edit Profile</Text>
-                </TouchableOpacity>
             </View>
         )
     }
@@ -117,7 +86,15 @@ export default class Profile extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        marginHorizontal: 20
+        marginHorizontal: 40
+    },
+    layout: {
+        width: '100%',
+        height: '45%',
+        backgroundColor: '#1abc9c',
+        paddingHorizontal: '10%',
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20
     },
     layPhoto: {
         flexDirection: 'row',
@@ -125,26 +102,38 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 20,
         width: '100%',
-        paddingBottom: 3,
-        borderBottomWidth: 1
     },
     photo: {
-        width: 90,
-        height: 90,
-        borderRadius: 10
+        backgroundColor: 'white',
+        width: 100,
+        height: 130,
+        borderRadius: 10,
+        elevation: 10
     },
     layText: {
+        marginTop: 10,
         marginLeft: 20,
         width: '60%'
     },
     nameUser: {
         fontSize: 24,
-        color: '#444',
+        color: '#3e383e',
         fontFamily: 'Montserrat-Bold'
     },
+    email: {
+        fontSize: 16,
+        fontFamily: 'Montserrat-Medium',
+        color: '#333'
+    },
+    hp: {
+        fontSize: 16,
+        fontFamily: 'Montserrat-Medium',
+        color: '#333'
+    },
     role: {
-        fontSize: 18,
-        fontFamily: 'Montserrat-Medium'
+        fontSize: 16,
+        fontFamily: 'Montserrat-Medium',
+        color: '#333'
     },
     butEdit: {
         backgroundColor: '#dcdcdc',
@@ -158,13 +147,26 @@ const styles = StyleSheet.create({
         color: '#3e383e',
         fontSize: 15
     },
+    butLogout: {
+        backgroundColor: '#eb2323',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 15,
+        marginTop: 10
+    },
+    textLogout: {
+        fontFamily: 'Montserrat-Bold',
+        color: 'white',
+        fontSize: 15
+    },
     layHistory: {
-        marginTop: 20
+        marginTop: 50,
+        marginHorizontal: '10%'
     },
     textHistory: {
         fontFamily: 'Montserrat-Bold',
         color: '#3e383e',
-        fontSize: 20
+        fontSize: 24
     },
     layMenu: {
         marginLeft: 20,
