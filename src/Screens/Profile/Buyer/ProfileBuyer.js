@@ -84,6 +84,7 @@ class ProfileBuyer extends Component {
                     </View>
                 </View>
                 <View style={styles.layHistory}>
+
                     <Text style={styles.textHistory}>Riwayat Pembelian</Text>
                     <View style={{height: '74%', paddingBottom: 20}}>
                     <ScrollView>
@@ -123,6 +124,7 @@ const styles = StyleSheet.create({
     layout: {
         width: '100%',
         height: '28%',
+
         backgroundColor: '#1abc9c',
         paddingHorizontal: '10%',
         borderBottomLeftRadius: 20,
