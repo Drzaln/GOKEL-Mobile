@@ -35,6 +35,17 @@ export const DetailTransaksiPenjual = (username) => {
     }
 }
 
+export const UpdateKonfirmasi = data => {
+    return {
+        type: 'PATCH_KONFIRMASI',
+        payload: axios.patch(`${url}konfirmasi`, data, {
+            headers: {
+                'authorization': 'gokel'
+            }
+        })
+    }
+}
+
 export const DeleteTransaksi = data => {
   console.warn(`transaksi`, data)
   return {

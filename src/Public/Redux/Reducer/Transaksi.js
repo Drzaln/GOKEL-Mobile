@@ -115,7 +115,29 @@ const transaksi = (state = initialState, action) => {
         isLoading: false,
         isRejected: false,
         isFulfilled: true,
-        detailTransaksi: action.payload.data
+        detailTransaksi: action.payload.data.result
+      }
+    case 'PATCH_KONFIRMASI_PENDING':
+      return {
+        ...state,
+        isLoading: true,
+        isRejected: false,
+        isFulfilled: false
+      }
+    case 'PATCH_KONFIRMASI_REJECTED':
+      return {
+        ...state,
+        isLoading: false,
+        isRejected: true,
+        isFulfilled: false
+      }
+    case 'PATCH_KONFIRMASI_FULFILLED':
+      return {
+        ...state,
+        isLoading: false,
+        isRejected: false,
+        isFulfilled: true,
+        detailTransaksi: action.payload.data.result
       }
     default:
       return state

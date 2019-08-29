@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import Menu, { MenuItem } from 'react-native-material-menu'
-import { DetailTransaksiPenjual } from '../../../Public/Redux/Action/Transaksi'
+import { DetailTransaksiPenjual, UpdateKonfirmasi } from '../../../Public/Redux/Action/Transaksi'
 import { connect } from 'react-redux'
 
 class ProfileMerchant extends Component {
@@ -25,7 +25,8 @@ class ProfileMerchant extends Component {
       idJajan: props.navigation.getParam('id_jajan'),
       stock: props.navigation.getParam('stok'),
       harga: props.navigation.getParam('harga'),
-      username: props.navigation.getParam('username')
+      username: props.navigation.getParam('username'),
+      saldo: 0,
     }
   }
 
@@ -49,11 +50,31 @@ class ProfileMerchant extends Component {
     this.props.navigation.navigate('Login')
   }
 
+//  componentWillMount() {
+//     AsyncStorage.getItem('Username', (err, result) => {
+//         if (result) {
+//           this.setState({ name: result })
+//         }
+//      this.props.dispatch(UpdateKonfirmasi(this.state.name))
+//         .then((result) => {
+//             console.warn('result', result.value.data.result[0].saldo)
+//             this.setState({
+//                 saldo: result.value.data.result[0].saldo
+//             })
+//         })
+//  }
+
   componentDidMount = async () => {
     const Username = await AsyncStorage.getItem('Username')
     await this.props.dispatch(DetailTransaksiPenjual(Username)).then(res => {
       console.warn(res)
       console.warn(this.props.detailTransaksi)
+    })
+  }
+
+  handleConfirm  = async () => {
+    await this.props.dispatch(UpdateKonfirmasi()).then(res => {
+        con
     })
   }
 
@@ -139,8 +160,9 @@ class ProfileMerchant extends Component {
                       Total Harga: {item.total_harga}
                     </Text>
                   </View>
+                  {this.props.detailTransaksi.map((item) => {
                   <View style={{ justifyContent: 'center' }}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={this.handleConfirm}>
                       <View style={styles.buttonKonf}>
                         <Text style={styles.textKonf}>Konfirmasi</Text>
                       </View>
@@ -150,6 +172,7 @@ class ProfileMerchant extends Component {
                       <Text style={styles.textKonf}>Konfirmasi</Text>
                     </View>
                   </View>
+                 })} 
                 </View>
               </View>
             )
