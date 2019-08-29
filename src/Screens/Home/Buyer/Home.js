@@ -41,20 +41,6 @@ class Home extends Component {
   }
 
   user = () => {
-<<<<<<< HEAD
-    firebase.database().ref('users/pedagang').on('value', (result) => {
-      let data = result.val();
-      console.warn('data', data)
-      console.warn('nama', this.state.name)
-      if (data !== '') {
-        this.setState((prevState) => {
-          return {
-            allCoor: [...prevState.allCoor, data]
-          }
-        })
-      }
-    });
-=======
     firebase
       .database()
       .ref('users/')
@@ -73,7 +59,6 @@ class Home extends Component {
           })
         }
       })
->>>>>>> 74f7753c92aaa215813c06ef24e44815e412bd88
   }
 
   componentWillMount () {
@@ -94,16 +79,6 @@ class Home extends Component {
   updateToFirebase = () => {
     const { name, dataUser } = this.state
     console.warn('utuk update', dataUser)
-<<<<<<< HEAD
-    firebase.database().ref('/users/' + 'pembeli' + '/' + name).update({
-      username: dataUser.username,
-      nama: dataUser.nama,
-      photo: dataUser.foto,
-      latitude: this.state.latitude,
-      longitude: this.state.longitude
-    })
-
-=======
     firebase
       .database()
       .ref('/users/' + 'pembeli' + '/' + name)
@@ -114,7 +89,6 @@ class Home extends Component {
         latitude: this.state.latitude,
         longitude: this.state.longitude
       })
->>>>>>> 74f7753c92aaa215813c06ef24e44815e412bd88
   }
 
   render () {
@@ -140,18 +114,10 @@ class Home extends Component {
           'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fkawuloalitox.files.wordpress.com%2F2009%2F10%2Fsate-ayam.png&f=1'
       }
     ]
-<<<<<<< HEAD
-    console.warn("alldata", this.state.allCoor)
-    console.log("alldata", this.state.allCoor)
-    console.warn("list", this.state.data)
-    const alldatatoMap = this.state.allCoor
-    const list = this.state.data
-=======
     console.warn('alldata', this.state.allCoor)
     const alldatatoMap = this.state.allCoor
     const list = this.state.data
     // list.push(this.state.name)
->>>>>>> 74f7753c92aaa215813c06ef24e44815e412bd88
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
@@ -247,17 +213,6 @@ class Home extends Component {
                 <Text style={styles.textView}>Kategori</Text>
               </View>
               <View style={styles.textLihat}>
-<<<<<<< HEAD
-                {/* {
-                  alldatatoMap.map((apalah, index1) => {
-                    return (
-                      < TouchableOpacity key={index1} onPress={() => this.props.navigation.navigate('MapBuyer', apalah)}>
-                        <Text style={styles.textLink}>Lihat semua</Text>
-                      </TouchableOpacity>
-                    )
-                  })
-                } */}
-=======
                 <TouchableOpacity
                   onPress={() =>
                     this.props.navigation.navigate('MapBuyer', alldatatoMap)
@@ -265,7 +220,6 @@ class Home extends Component {
                 >
                   <Text style={styles.textLink}>Lihat semua</Text>
                 </TouchableOpacity>
->>>>>>> 74f7753c92aaa215813c06ef24e44815e412bd88
               </View>
             </View>
             <FlatGrid
@@ -276,13 +230,9 @@ class Home extends Component {
               renderItem={({ item, index }) => (
                 <TouchableOpacity
                   key={index}
-<<<<<<< HEAD
-                  onPress={() => this.props.navigation.navigate('MapBuyer')}
-=======
                   onPress={() =>
                     this.props.navigation.navigate('MapBuyer', { idKategori: item.id })
                   }
->>>>>>> 74f7753c92aaa215813c06ef24e44815e412bd88
                 >
                   <View
                     style={[

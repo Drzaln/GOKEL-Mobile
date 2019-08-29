@@ -7,6 +7,7 @@ import IntroSlider from '../Screens/Welcome/Welcome'
 import Login from '../Screens/Login/Login'
 import ChooseRole from '../Screens/Register/ChooseRole'
 import Chat from '../Screens/Chat/Chat'
+import Chatlist from '../Screens/Chat/Chatlist'
 
 import RegisterBuyer from '../Screens/Register/RegisterBuyer'
 import HomeBuy from '../Screens/Home/Buyer/Home'
@@ -88,6 +89,12 @@ const SellerNavigator = createStackNavigator({
             header: null
         }
     },
+    Chatlist: {
+        screen: Chatlist,
+        navigationOptions:{
+            header: null
+        }
+    },
     
 })
 
@@ -99,6 +106,7 @@ export default createAppContainer(
         Login: Login,
         ChooseRole: ChooseRole,
         Chat: Chat,
+        Chatlist: Chatlist,
         RegisterBuyer: RegisterBuyer,
         RegisterSeller: RegisterSeller,
         HomeBuyer: BuyerNavigator,
