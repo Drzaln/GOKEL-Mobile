@@ -11,6 +11,7 @@ export default class Profile extends Component {
             nama:props.navigation.getParam('nama'),
             email:props.navigation.getParam('email'),
             no_hp:props.navigation.getParam('no_hp'),
+            username: props.navigation.getParam('username'),
         }
     }
 
@@ -35,8 +36,10 @@ export default class Profile extends Component {
     }
 
     render() {
+        console.warn('profile',this.state.username)
         const { goBack } = this.props.navigation;
-        const {foto, nama,email, no_hp} = this.state
+        const {foto, nama, email, no_hp, username} = this.state
+        const data = {foto, nama, no_hp, username, email}
         return (
             <View>
                 <StatusBar backgroundColor="#1abc9c" barStyle="dark-content" />

@@ -88,6 +88,8 @@ class Home extends Component {
   }
 
   render() {
+    console.warn(this.state.data)
+
     const items = [
       { name: 'SAYUR', code: '#1abc9c' },
       { name: 'MINUMAN', code: '#2ecc71' },
@@ -111,6 +113,7 @@ class Home extends Component {
     console.warn("alldata", this.state.allCoor)
     const alldatatoMap = this.state.allCoor
     const list = this.state.data
+    // list.push(this.state.name)
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
