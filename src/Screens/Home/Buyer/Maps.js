@@ -5,13 +5,16 @@ import {
   StatusBar,
   Image,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  AsyncStorage
 } from 'react-native'
 import { FAB } from 'react-native-paper'
 import Modal from 'react-native-modal'
 import firebase from 'react-native-firebase'
 import geolocation from '@react-native-community/geolocation'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
+import { PostTransaksi } from '../../../Public/Redux/Action/Transaksi'
+import { connect } from 'react-redux'
 
 export class Maps extends Component {
   constructor (props) {
@@ -110,6 +113,27 @@ export class Maps extends Component {
     })
   }
 
+  keBeli = async () => {
+    console.warn(`porrrpppps`, this.props)
+    const dataUsername = await AsyncStorage.getItem('Username')
+    const data = {
+      username_pembeli: dataUsername,
+      username_pedagang: this.state.nama
+    }
+    this.props
+      .dispatch(PostTransaksi(data))
+      .then(() => {
+        this.toggleModal()
+        this.props.navigation.navigate('Payment', {
+          username_pembeli: dataUsername,
+          username_pedagang: this.state.nama
+        })
+      })
+      .catch(() => {
+        console.warn('meh')
+      })
+  }
+
   render () {
     const { goBack } = this.props.navigation
     return (
@@ -170,7 +194,7 @@ export class Maps extends Component {
                     <Text style={styles.fontNama}>{this.state.nama}</Text>
                     <Text style={styles.fontPorsi}>Sisa ± 30 Porsi </Text>
                     <Text style={styles.fontHarga}>Rp 5000</Text>
-                    <TouchableOpacity onPress={() => alert('kepencet')}>
+                    <TouchableOpacity onPress={() => this.keBeli()}>
                       <View style={styles.buttonBeli}>
                         <Text style={styles.fontBeli}>BELI</Text>
                       </View>
@@ -214,7 +238,13 @@ export class Maps extends Component {
   }
 }
 
-export default Maps
+const mapStateToProps = state => {
+  return {
+    transaksi: state.transaksi
+  }
+}
+
+export default connect(mapStateToProps)(Maps)
 
 const styles = StyleSheet.create({
   fabBack: {

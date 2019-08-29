@@ -7,21 +7,70 @@ import {
   Text,
   TouchableOpacity
 } from 'react-native'
+import { connect } from 'react-redux'
+import Spinner from "react-native-loading-spinner-overlay";
+import { DeleteTransaksi, UpdateTransaksi } from '../../Public/Redux/Action/Transaksi'
 
 export class Payment extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      spinner: false,
+      username_pembeli: this.props.navigation.getParam('username_pembeli'),
+      username_pedagang: this.props.navigation.getParam('username_pedagang'),
+      harga: '',
+      porsi: ''
+    }
+  }
+
+  buttonBatal = () => {
+    console.warn(`pembeli`, this.state.username_pembeli)
+    console.warn(`pedagang`, this.state.username_pedagang)
+    const data = {
+      username_pembeli: this.state.username_pembeli,
+      username_pedagang: this.state.username_pedagang
+    }
+    this.props.dispatch(DeleteTransaksi(data)).then(() => {
+      this.props.navigation.navigate('MapBuyer')
+    })
+  }
+  
+  buttonBayar = () => {
+    this.setState({
+      spinner: true
+    })
+    const {harga, porsi} = this.state
+    if (harga !== '' && porsi !== '' ) {
+      const data ={
+        username_pembeli: this.state.username_pembeli,
+        username_pedagang: this.state.username_pedagang,
+        jumlah: this.state.porsi,
+        total_harga: this.state.harga
+      }
+      this.props.dispatch(UpdateTransaksi(data)).then(() => {
+        this.setState({
+          spinner: false
+        })
+        this.props.navigation.navigate('HomeBuy')
+      })
+    }else{
+      this.setState({
+        spinner: false
+      })
+      alert('Harga dan total tidak boleh kosong')
+    }
+  }
+
   render () {
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
-        <View
-          style={{
-            width: '100%',
-            padding: 16,
-            backgroundColor: 'white',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
+        <View style={styles.headers}>
+        <Spinner
+          visible={this.state.spinner}
+          textContent={'Loading...'}
+          textStyle={{ color: '#fff' }}
+        />
           <Text
             style={{
               fontFamily: 'Montserrat-Bold',
@@ -40,8 +89,16 @@ export class Payment extends Component {
               width: '100%'
             }}
           >
-            <InputText placeholder='Harga...' autoFocus />
-            <InputText placeholder='Porsi...' autoFocus={false} />
+            <InputText
+              placeholder='Harga...'
+              onChangeText={harga => this.setState({ harga })}
+              autoFocus
+            />
+            <InputText
+              placeholder='Porsi...'
+              onChangeText={porsi => this.setState({ porsi })}
+              autoFocus={false}
+            />
             <View
               style={{
                 flexDirection: 'row',
@@ -49,12 +106,12 @@ export class Payment extends Component {
                 width: '100%'
               }}
             >
-              <TouchableOpacity onPress={() => alert('kepencet')}>
+              <TouchableOpacity onPress={() => this.buttonBatal()}>
                 <View style={styles.buttonBayar}>
-                  <Text style={styles.fontBayar}>KIRIM PESAN</Text>
+                  <Text style={styles.fontBayar}>BATAL</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => alert('kepencet')}>
+              <TouchableOpacity onPress={() => this.buttonBayar()}>
                 <View style={styles.buttonTunai}>
                   <Text style={styles.fontTunai}>BAYAR TUNAI</Text>
                 </View>
@@ -66,7 +123,13 @@ export class Payment extends Component {
     )
   }
 }
-export default Payment
+const mapStateToProps = state => {
+  return {
+    transaksi: state.transaksi
+  }
+}
+
+export default connect(mapStateToProps)(Payment)
 
 class InputText extends Component {
   render () {
@@ -121,7 +184,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderColor: '#ff6961',
     borderWidth: 2,
-    padding: 16
+    paddingHorizontal: '13%'
   },
   fontBayar: {
     fontSize: 18,
@@ -144,5 +207,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Montserrat',
     color: '#fff'
+  },
+  headers: {
+    width: '100%',
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
