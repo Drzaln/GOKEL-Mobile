@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 32,
-    width: '70%'
+    width: '100%'
   },
   profil: {
     width: 80,

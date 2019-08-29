@@ -32,13 +32,20 @@ export class Chat extends Component {
       avatar: '',
       image: 'blabla',
       textMessage: '',
-      messageList: []
+      messageList: [],
+      myUsername: '',
+      username: this.props.navigation.getParam('username')
     }
     AsyncStorage.getItem('Role', (error, result) => {
-        this.setState({
-          role: result
-        })
+      this.setState({
+        role: result
       })
+    })
+    AsyncStorage.getItem('Username', (error, result) => {
+      this.setState({
+        myUsername: result
+      })
+    })
   }
 
   db = firebase.database()
@@ -46,8 +53,8 @@ export class Chat extends Component {
   async componentDidMount () {
     await this.db
       .ref('messages')
-      .child(this.state.myuid)
-      .child(this.state.uid)
+      .child(this.state.myUsername)
+      .child(this.state.username)
       .on('child_added', value => {
         this.setState(previousState => {
           return {
@@ -64,8 +71,8 @@ export class Chat extends Component {
     if (this.state.textMessage.length > 0) {
       let msgId = this.db
         .ref('messages')
-        .child(this.state.myuid)
-        .child(this.state.uid)
+        .child(this.state.myUsername)
+        .child(this.state.username)
         .push().key
       let updates = {}
       let message = {
@@ -73,16 +80,26 @@ export class Chat extends Component {
         text: this.state.textMessage,
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         user: {
-          _id: this.state.myuid,
-          name: this.state.myname,
+          _id: this.state.myUsername,
+          name: this.state.myUsername,
           avatar: this.state.avatar
         }
       }
       updates[
-        'messages/' + this.state.myuid + '/' + this.state.uid + '/' + msgId
+        'messages/' +
+          this.state.myUsername +
+          '/' +
+          this.state.username +
+          '/' +
+          msgId
       ] = message
       updates[
-        'messages/' + this.state.uid + '/' + this.state.myuid + '/' + msgId
+        'messages/' +
+          this.state.username +
+          '/' +
+          this.state.myUsername +
+          '/' +
+          msgId
       ] = message
       this.db.ref().update(updates)
       this.setState({ textMessage: '' })
@@ -154,19 +171,19 @@ export class Chat extends Component {
     )
   }
 
-  checkRole= async() => {
+  checkRole = async () => {
     const { role } = this.state
     if (role === 'pembeli') {
       this.props.navigation.navigate('MapBuyer')
     } else if (role === 'pedagang') {
       this.props.navigation.navigate('MapSeller')
     } else {
-      alert("ada kesalah!!! Hubungi penyedia layanan")
+      alert('ada kesalah!!! Hubungi penyedia layanan')
     }
   }
 
   render () {
-    const { goBack } = this.props.navigation;
+    const { goBack } = this.props.navigation
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />

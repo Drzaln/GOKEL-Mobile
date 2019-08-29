@@ -20,6 +20,11 @@ export class Maps extends Component {
       isModalVisible: false,
       idKategori: this.props.navigation.getParam('idKategori'),
       users: [],
+      nama: '',
+      username: '',
+      foto: '',
+      porsi: 0,
+      harga: 0
     }
   }
 
@@ -75,16 +80,21 @@ export class Maps extends Component {
     })
   }
 
-  modalOut = (lat, long) => {
+  modalOut = marker => {
     let region = {
-      latitude: lat,
-      longitude: long,
+      latitude: marker.latitude,
+      longitude: marker.longitude,
       latitudeDelta: 0.00922 * 1,
       longitudeDelta: 0.00421 * 1
     }
     this.setState({
       isModalVisible: !this.state.isModalVisible,
-      mapRegion: region
+      mapRegion: region,
+      nama: marker.nama,
+      username: marker.username,
+      foto: marker.foto,
+      porsi: marker.stok,
+      harga: marker.harga
     })
   }
 
@@ -124,9 +134,7 @@ export class Maps extends Component {
               return (
                 <Marker
                   key={index}
-                  onPress={() =>
-                    this.modalOut(marker.latitude, marker.longitude)
-                  }
+                  onPress={() => this.modalOut(marker)}
                   coordinate={{
                     latitude: marker.latitude,
                     longitude: marker.longitude
@@ -135,62 +143,57 @@ export class Maps extends Component {
               )
             })}
           </MapView>
-          {this.state.users.map((marker, index) => {
-            return (
-              <Modal
-                key={index}
-                onSwipeComplete={() => this.toggleModal()}
-                onBackdropPress={() => this.toggleModal()}
-                isVisible={this.state.isModalVisible}
-                swipeDirection='down'
-                scrollTo={this.handleScrollTo}
-                scrollOffset={this.state.scrollOffset}
-                scrollOffsetMax={400 - 300}
-                backdropOpacity={0.1}
-                style={styles.bottomModal}
-              >
-                <View style={styles.scrollableModal}>
-                  <View style={{ height: '15%' }} />
-                  <View style={styles.scrollableModalContent1}>
-                    <View style={{ flexDirection: 'row' }}>
-                      <View style={{ marginRight: 16 }}>
-                        <Image
-                          source={{
-                            uri: marker.foto
-                          }}
-                          style={styles.profil}
-                        />
+          <Modal
+            onSwipeComplete={() => this.toggleModal()}
+            onBackdropPress={() => this.toggleModal()}
+            isVisible={this.state.isModalVisible}
+            swipeDirection='down'
+            scrollTo={this.handleScrollTo}
+            scrollOffset={this.state.scrollOffset}
+            scrollOffsetMax={400 - 300}
+            backdropOpacity={0.1}
+            style={styles.bottomModal}
+          >
+            <View style={styles.scrollableModal}>
+              <View style={{ height: '15%' }} />
+              <View style={styles.scrollableModalContent1}>
+                <View style={{ flexDirection: 'row' }}>
+                  <View style={{ marginRight: 16 }}>
+                    <Image
+                      source={{
+                        uri: this.state.foto
+                      }}
+                      style={styles.profil}
+                    />
+                  </View>
+                  <View style={{ flex: 2 }}>
+                    <Text style={styles.fontNama}>{this.state.nama}</Text>
+                    <Text style={styles.fontPorsi}>Sisa ± 30 Porsi </Text>
+                    <Text style={styles.fontHarga}>Rp 5000</Text>
+                    <TouchableOpacity onPress={() => alert('kepencet')}>
+                      <View style={styles.buttonBeli}>
+                        <Text style={styles.fontBeli}>BELI</Text>
                       </View>
-                      <View style={{ flex: 2 }}>
-                        <Text style={styles.fontNama}>{marker.nama}</Text>
-                        <Text style={styles.fontPorsi}>Sisa ± 30 Porsi </Text>
-                        <Text style={styles.fontHarga}>Rp 5000</Text>
-                        <TouchableOpacity onPress={() => alert('kepencet')}>
-                          <View style={styles.buttonBeli}>
-                            <Text style={styles.fontBeli}>BELI</Text>
-                          </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          onPress={() =>
-                            this.props.navigation.navigate('Chat', {
-                              username: marker.username
-                            })
-                          }
-                        >
-                          <View style={styles.buttonPesan}>
-                            <Text style={styles.fontPesan}>KIRIM PESAN</Text>
-                          </View>
-                        </TouchableOpacity>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() =>
+                        this.props.navigation.navigate('Chat', {
+                          username: this.state.username
+                        })
+                      }
+                    >
+                      <View style={styles.buttonPesan}>
+                        <Text style={styles.fontPesan}>KIRIM PESAN</Text>
                       </View>
-                      <View style={styles.viewBuletan}>
-                        <View style={styles.buletan} />
-                      </View>
-                    </View>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.viewBuletan}>
+                    <View style={styles.buletan} />
                   </View>
                 </View>
-              </Modal>
-            )
-          })}
+              </View>
+            </View>
+          </Modal>
           <FAB
             color='#00ADB5'
             style={styles.fabBack}

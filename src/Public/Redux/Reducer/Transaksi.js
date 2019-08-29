@@ -7,8 +7,8 @@ const initialState = {
     isRejected: false,
 };
 
-const transaksi = (state = initialState, actio) => {
-    switch (ActionType, type) {
+const transaksi = (state = initialState, action) => {
+    switch (action.type) {
         case 'POST_TRANSAKSI_PENDING':
             return {
                 ...state,
