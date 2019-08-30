@@ -198,7 +198,7 @@ class HomeSeller extends Component {
                     <View>
 
                       <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('ProfileSeller', item)}
+                        onPress={() => this.props.navigation.navigate('ProfileSeller', {item,saldo:this.state.saldoTampil})}
                       >
                         <Image
                           source={{

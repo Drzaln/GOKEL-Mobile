@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   AsyncStorage,
-  FlatList
+  FlatList,
+  NavigationActions 
 } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid'
 import firebase from 'react-native-firebase'

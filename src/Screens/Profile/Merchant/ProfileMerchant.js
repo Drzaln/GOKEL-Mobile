@@ -26,7 +26,8 @@ class ProfileMerchant extends Component {
             idJajan: props.navigation.getParam('id_jajan'),
             stock: props.navigation.getParam('stok'),
             harga: props.navigation.getParam('harga'),
-            username: props.navigation.getParam('username')
+            username: this.props.navigation.getParam('username'),
+            data:[]
         }
     }
 
@@ -54,7 +55,30 @@ class ProfileMerchant extends Component {
         const Username = await AsyncStorage.getItem('Username')
         await this.props.dispatch(DetailTransaksiPenjual(Username)).then(res => {
             console.warn(res)
-            console.warn(this.props.detailTransaksi)
+            // console.warn('transaksi', this.props.detailTransaksi)
+            this.setState({data:this.props.detailTransaksi})
+        })
+    }
+
+    handleConfirm = async (pembeli,harga) => {
+        // console.warn('pembeli ',this.state.username)
+        const username = await AsyncStorage.getItem('Username')
+        const saldo = Number(this.props.navigation.getParam('saldo'))
+        let hasil = saldo - (Number(harga) * 0.1)    
+        console.warn('saldo ',hasil )    
+        const data  = {
+            saldo: hasil,
+            username_pembeli:pembeli,
+            username_pedagang :username
+        }
+        this.props.dispatch(UpdateKonfirmasi(data))
+        .then(data => {
+            console.warn(data);
+            
+        })
+        .catch(err => {
+            console.warn(err);
+            
         })
     }
 
@@ -125,7 +149,7 @@ class ProfileMerchant extends Component {
                     <Text style={styles.textHistory}>Riwayat Penjualan</Text>
                     <View style={{ height: '74%', width: '100%', paddingBottom: 20 }}>
                         <ScrollView >
-                            {this.props.detailTransaksi.map(item => {
+                            {this.state.data.map(item => {
                                 return (
                                     <View style={styles.layMenu}>
                                         <View
@@ -144,15 +168,20 @@ class ProfileMerchant extends Component {
                                                 </Text>
                                             </View>
                                             <View style={{ justifyContent: 'center' }}>
-                                                <TouchableOpacity>
+                                                {Number(item.status) === 0  ?<TouchableOpacity onPress={()=>{
+                                                    this.handleConfirm(item.pembeli,item.total_harga)
+                                                }}>
                                                     <View style={styles.buttonKonf}>
                                                         <Text style={styles.textKonf}>Konfirmasi</Text>
                                                     </View>
-                                                </TouchableOpacity>
-                                                {/* tombol mati */}
+                                                </TouchableOpacity>:
                                                 <View style={styles.buttonKonfMati}>
                                                     <Text style={styles.textKonf}>Konfirmasi</Text>
                                                 </View>
+
+                                                }
+                                                
+                                                
                                             </View>
                                         </View>
                                     </View>
@@ -168,7 +197,8 @@ class ProfileMerchant extends Component {
 
 const mapStateToProps = state => {
     return {
-        detailTransaksi: state.transaksi.detailTransaksi
+        detailTransaksi: state.transaksi.detailTransaksi,
+        transaksi : state.transaksi
     }
 }
 

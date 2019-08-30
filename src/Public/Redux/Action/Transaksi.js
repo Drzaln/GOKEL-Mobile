@@ -47,6 +47,7 @@ export const DetailTransaksiPenjual = (username) => {
     }
 }
 
+
 export const UpdateKonfirmasi = data => {
     return {
         type: 'PATCH_KONFIRMASI',
@@ -55,7 +56,7 @@ export const UpdateKonfirmasi = data => {
                 'authorization': 'gokel'
             }
         })
-    }
+   }  
 }
 
 export const DeleteTransaksi = data => {

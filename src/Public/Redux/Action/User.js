@@ -78,6 +78,13 @@ export const updateSaldo = (username, data) => {
         })
     }
 }
+
+export const updateStock = (username,data) => {
+    return {
+        type: 'PATCH_SALDO',
+        payload: axios.patch(`${api}updatestock/${username}`, data)
+    }
+}
  
 export const updateUserPedagang = (username, input) => {
     return {
