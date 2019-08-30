@@ -35,6 +35,13 @@ export const DetailTransaksiPenjual = (username) => {
     }
 }
 
+export const UpdateTransaksi = (data) => {
+  return {
+      type: 'PATCH_PEMBELI',
+      payload: axios.patch(`${url}update/`,data)
+  }
+}
+
 export const DeleteTransaksi = data => {
   console.warn(`transaksi`, data)
   return {

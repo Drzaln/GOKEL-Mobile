@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, StatusBar, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, StatusBar, ScrollView, AppState , FlatList} from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay'
@@ -16,6 +16,7 @@ class ProfileBuyer extends Component {
             email: props.navigation.getParam('email'),
             no_hp: props.navigation.getParam('no_hp'),
             username: props.navigation.getParam('username'),
+
         }
     }
 
@@ -39,25 +40,52 @@ class ProfileBuyer extends Component {
         this.props.navigation.navigate('Login')
     }
 
-    componentDidMount = async () => {
+    componentWillMount = async () => {
+        await this.getTransaksi()
+    }
+
+    getTransaksi = async () => {
+        this.setState({
+            spinner: true
+        })
         const Username = await AsyncStorage.getItem('Username')
         await this.props.dispatch(DetailTransaksiPembeli(Username))
             .then((res) => {
                 console.warn(res);
-                console.warn(this.props.detailTransaksi);
+                this.setState({
+                    spinner: false,
+                    data: this.props.detailTransaksi
+                })
             })
+    }
+
+    renderRow = ({ item }) => {
+        // console.warn("item", item)
+
+        return (
+                <View style={{marginBottom: 10 }}>
+                    <Text style={styles.menu}>Pedagang : {item.pedagang}</Text>
+                    <Text style={styles.name}>Harga : Rp {item.total_harga}</Text>
+                    <Text style={styles.phone}>Jumlah :{item.jumlah}</Text>
+                </View>
+        )
     }
 
     render() {
         console.warn('nama props', this.props.navigation.getParam('nama'))
         console.warn('nama state', this.state.nama)
-
+        console.warn('nama state', this.state.data)
         const { goBack } = this.props.navigation;
         const { foto, nama, email, no_hp, username } = this.state
         const data = { foto, nama, email, no_hp, username }
 
         return (
             <View>
+                <Spinner
+                    visible={this.state.spinner}
+                    textContent={'Loading...'}
+                    textStyle={{ color: '#fff' }}
+                />
                 <StatusBar backgroundColor="#1abc9c" barStyle="dark-content" />
                 <View style={styles.layout}>
                     <View style={{ flexDirection: 'row', width: '100%' }}>
@@ -74,7 +102,7 @@ class ProfileBuyer extends Component {
                             </Menu>
                         </View>
                     </View>
-                    <View style={{ flexDirection: 'row', marginTop: '5%'}}>
+                    <View style={{ flexDirection: 'row', marginTop: '5%' }}>
                         <Image style={styles.photo} source={{ uri: `${this.props.navigation.getParam('foto')}` }} />
                         <View style={styles.layText}>
                             <Text style={styles.nameUser}>{this.props.navigation.getParam('nama')}</Text>
@@ -86,22 +114,15 @@ class ProfileBuyer extends Component {
                 <View style={styles.layHistory}>
 
                     <Text style={styles.textHistory}>Riwayat Pembelian</Text>
-                    <View style={{height: '74%', paddingBottom: 20}}>
-                    <ScrollView>
-                        {this.props.detailTransaksi.map((item) => {
-                            // console.warn("transaksi", item.pedagang);
-                            return (
-                                <ScrollView style={styles.layMenu}>
-                                    {/* <Text style={styles.number}>1</Text> */}
-                                    <View style={{ marginLeft: 20 }}>
-                                        <Text style={styles.menu}>Nama Penjual: {item.pedagang}</Text>
-                                        <Text style={styles.price}>Total Harga: {item.total_harga}</Text>
-                                        <Text style={styles.price}>Jumlah Barang: {item.jumlah}</Text>
-                                    </View>
-                                </ScrollView>
-                            )
-                        })}
-                    </ScrollView>
+                    <View style={{ height: '74%', paddingBottom: 20 }}>
+                        {
+                            console.warn("data ", this.props.detailTransaksi)
+                        }
+                        <FlatList
+                            data={this.state.data}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={this.renderRow}
+                        />
                     </View>
                 </View>
             </View>
