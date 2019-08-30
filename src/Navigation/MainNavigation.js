@@ -5,17 +5,36 @@ import {
 } from 'react-navigation'
 import IntroSlider from '../Screens/Welcome/Welcome'
 import Login from '../Screens/Login/Login'
-import RegisterBuyer from '../Screens/Register/RegisterBuyer'
-import HomeBuyer from '../Screens/Home/Buyer/Home'
 import ChooseRole from '../Screens/Register/ChooseRole'
-import ProfileBuyer from '../Screens/Profile/Buyer/ProfileBuyer'
-import Payment from '../Screens/Payment/PaymentFInal'
-import EditProfileUser from '../Screens/Profile/Buyer/EditProfileBuyer'
-import EditPrice from "../Screens/Profile/Merchant/EditPriceStock";
+import Chat from '../Screens/Chat/Chat'
+import Chatlist from '../Screens/Chat/Chatlist'
 
-const AppNavigator = createStackNavigator({
-    HomeBuyer: {
-        screen: HomeBuyer,
+import RegisterBuyer from '../Screens/Register/RegisterBuyer'
+import HomeBuy from '../Screens/Home/Buyer/Home'
+import ProfileBuyer from '../Screens/Profile/Buyer/ProfileBuyer'
+import EditProfileBuyer from '../Screens/Profile/Buyer/EditProfileBuyer'
+import MapBuyer from '../Screens/Home/Buyer/Maps'
+
+import RegisterSeller from '../Screens/Register/MerchantRegistration'
+import HomeSell from '../Screens/Home/Merchant/Home'
+import ChatSell from '../Screens/Chat/ChatSeller'
+import ProfileSeller from '../Screens/Profile/Merchant/ProfileMerchant'
+import EditProfileSeller from '../Screens/Profile/Merchant/EditProfileMerchant'
+import EditPrice from "../Screens/Profile/Merchant/EditPriceStock";
+import MapSeller from '../Screens/Home/Merchant/Maps'
+
+import Payment from '../Screens/Payment/PaymentMethod'
+
+
+const BuyerNavigator = createStackNavigator({
+    HomeBuy: {
+        screen: HomeBuy,
+        navigationOptions: {
+            header: null
+        }
+    },
+    MapBuyer:{
+        screen: MapBuyer,
         navigationOptions: {
             header: null
         }
@@ -26,11 +45,11 @@ const AppNavigator = createStackNavigator({
             header: null
         }
     },
-    EditProfileUser: {
-        screen: EditProfileUser
-    },
-    EditPrice: {
-        screen: EditPrice
+    EditProfileBuyer: {
+        screen: EditProfileBuyer,
+        navigationOptions:{
+            title: 'Edit Profile'
+        }
     },
     Payment: {
         screen: Payment,
@@ -40,6 +59,52 @@ const AppNavigator = createStackNavigator({
     },
 });
 
+const SellerNavigator = createStackNavigator({
+    HomeSell: {
+        screen: HomeSell,
+        navigationOptions: {
+            header: null
+        }
+    },
+    MapSeller:{
+        screen: MapSeller,
+        navigationOptions: {
+            header: null
+        }
+    },
+    EditProfileSeller:{
+        screen: EditProfileSeller,
+        navigationOptions:{
+            title: 'Edit Profile'
+        }
+    },
+    EditPrice: {
+        screen: EditPrice,
+        navigationOptions:{
+            title: 'Edit Harga'
+        }
+    },
+    ProfileSeller: {
+        screen: ProfileSeller,
+        navigationOptions:{
+            header: null
+        }
+    },
+    Chatlist: {
+        screen: Chatlist,
+        navigationOptions:{
+            header: null
+        }
+    },
+    ChatSell: {
+        screen: ChatSell,
+        navigationOptions:{
+            header: null
+        }
+    },
+    
+})
+
 export default createAppContainer(
   createSwitchNavigator(
     {
@@ -47,11 +112,16 @@ export default createAppContainer(
         IntroSlider: IntroSlider,
         Login: Login,
         ChooseRole: ChooseRole,
+        Chat: Chat,
+        Chatlist: Chatlist,
         RegisterBuyer: RegisterBuyer,
-        Home: AppNavigator
+        RegisterSeller: RegisterSeller,
+        HomeBuyer: BuyerNavigator,
+        HomeSeller: SellerNavigator
     },
     {
-      initialRouteName: 'IntroSlider'
+      initialRouteName: 'Login'
     }
   )
 )
+

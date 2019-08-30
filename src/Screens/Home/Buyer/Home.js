@@ -7,9 +7,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   AsyncStorage,
-  FlatList
+  FlatList,
+  NavigationActions 
 } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid'
+import firebase from 'react-native-firebase'
+import Spinner from 'react-native-loading-spinner-overlay'
+import geolocation from '@react-native-community/geolocation'
 import { connect } from 'react-redux'
 import { getUserPembeli } from '../../../Public/Redux/Action/User'
 
@@ -18,30 +22,112 @@ class Home extends Component {
     super()
     this.state = {
       name: '',
-      data: []
+      dataUser: '',
+      data: [],
+      allCoor: '',
+      foto: '',
+      nama: '',
+      no_hp: '',
+      email: '',
+      username: '',
+      flag: false,
+      spinner: false
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    this.getLocation()
+  }
+
+  getLocation() {
+    this.watchID = geolocation.getCurrentPosition(position => {
+      this.setState({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      })
+    })
+  }
+
+  componentWillMount () {
+    this.setState({
+      spinner: true
+    })
     AsyncStorage.getItem('Username', (err, result) => {
       if (result) {
         this.setState({ name: result })
       }
-      this.props.dispatch(getUserPembeli(this.state.name))
-        .then((result) => {
-          this.setState({
-            data: result.value.data.result
-          })
+      this.props.dispatch(getUserPembeli(this.state.name)).then(result => {
+        this.setState({
+          data: result.value.data.result,
+          dataUser: result.value.data.result[0],
+          foto: result.value.data.result[0].foto,
+          nama: result.value.data.result[0].nama,
+          no_hp: result.value.data.result[0].no_hp,
+          email: result.value.data.result[0].email,
+          username: result.value.data.result[0].username,
+          spinner: false
         })
-
+        this.updateToFirebase()
+      })
     })
   }
+
+  updateToFirebase = () => {
+    const { name, dataUser } = this.state
+    console.warn('utuk update', dataUser)
+    firebase
+      .database()
+      .ref('/users/' + 'pembeli' + '/' + name)
+      .update({
+        username: dataUser.username,
+        nama: dataUser.nama,
+        foto: dataUser.foto,
+        latitude: this.state.latitude,
+        longitude: this.state.longitude
+      })
+  }
+
+  mainValidation = () => {
+    console.warn('flagnya', this.state.flag)
+
+    if (!this.state.flag) {
+      return (
+        this.setState({
+          flag: true
+        })
+      )
+    } else if (this.props.navigation.getParam('foto') || this.props.navigation.getParam('nama') || this.props.navigation.getParam('no_hp')) {
+      console.warn('validation jalan kan')
+      this.validation()
+    }
+  }
+  validation = () => {
+    if (this.state.nama !== this.props.navigation.getParam('nama') || this.state.no_hp !== this.props.navigation.getParam('no_hp') || this.state.foto !== this.props.navigation.getParam('foto')) {
+      this.setState({
+        foto: this.props.navigation.getParam('foto'),
+        nama: this.props.navigation.getParam('nama'),
+        no_hp: this.props.navigation.getParam('no_hp'),
+      })
+    }
+  }
+
   render() {
+    console.warn(this.state.data)
+    const itemData = {
+      foto: this.state.foto,
+      nama: this.state.nama,
+      no_hp: this.state.no_hp,
+      email: this.state.email,
+      username: this.state.username
+    }
+    this.mainValidation()
+
+
     const items = [
-      { name: 'SAYUR', code: '#1abc9c' },
-      { name: 'MINUMAN', code: '#2ecc71' },
-      { name: 'JAJANAN', code: '#3498db' },
-      { name: 'MAKANAN', code: '#9b59b6' }
+      { name: 'SAYUR', code: '#1abc9c', id: 4 },
+      { name: 'MINUMAN', code: '#2ecc71', id: 2 },
+      { name: 'SNACK', code: '#3498db', id: 3 },
+      { name: 'MAKANAN', code: '#9b59b6', id: 1 }
     ]
     const jualan = [
       {
@@ -57,32 +143,38 @@ class Home extends Component {
           'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fkawuloalitox.files.wordpress.com%2F2009%2F10%2Fsate-ayam.png&f=1'
       }
     ]
-
     const list = this.state.data
+    // list.push(this.state.name)
     return (
       <>
+       <Spinner
+            visible={this.state.spinner}
+            textContent={'Loading...'}
+            textStyle={{ color: '#fff' }}
+          />
         <StatusBar backgroundColor='white' barStyle='dark-content' />
         <View>
           <View style={styles.background}>
             <View style={styles.viewNama}>
               <View>
-                <Text style={styles.fontBold}>Halo, {this.state.name}</Text>
+                <Text style={styles.fontBold}>Halo, {itemData.nama}</Text>
               </View>
               <View>
-                {
-                  list.map((item,index) => {
-                    return (
-                      <TouchableOpacity key={index} onPress={() => this.props.navigation.navigate('ProfileBuyer', item)}>
-                        <Image
-                          source={{
-                            uri: `${item.foto}`
-                          }}
-                          style={styles.profil}
-                        />
-                      </TouchableOpacity>
-                    )
-                  })
-                }
+
+                <TouchableOpacity
+                  
+                  onPress={() =>
+                    this.props.navigation.navigate('ProfileBuyer', itemData)
+                  }
+                >
+                  <Image
+                    source={{
+                      uri: `${itemData.foto}`
+                    }}
+                    style={styles.profil}
+                  />
+                </TouchableOpacity>
+
               </View>
             </View>
           </View>
@@ -95,7 +187,7 @@ class Home extends Component {
               renderItem={({ item, index }) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => alert(`kepencet ${index}`)}
+                  onPress={() => this.props.navigation.navigate('MapBuyer')}
                 >
                   <View
                     style={{
@@ -150,7 +242,11 @@ class Home extends Component {
                 <Text style={styles.textView}>Kategori</Text>
               </View>
               <View style={styles.textLihat}>
-                <TouchableOpacity onPress={() => alert('kepencet')}>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.props.navigation.navigate('MapBuyer')
+                  }
+                >
                   <Text style={styles.textLink}>Lihat semua</Text>
                 </TouchableOpacity>
               </View>
@@ -163,7 +259,9 @@ class Home extends Component {
               renderItem={({ item, index }) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => alert(`kepencet ${item.name}`)}
+                  onPress={() =>
+                    this.props.navigation.navigate('MapBuyer', { idKategori: item.id })
+                  }
                 >
                   <View
                     style={[

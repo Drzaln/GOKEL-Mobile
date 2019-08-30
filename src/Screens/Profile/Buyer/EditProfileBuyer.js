@@ -1,28 +1,114 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native'
+import ImagePicker from 'react-native-image-picker'
+import { updateUserPembeli } from '../../../Public/Redux/Action/User'
+import { connect } from 'react-redux'
+import { withNavigation } from 'react-navigation'
 
-export default class Profile extends Component {
-    state = {
-        name: 'name',
-        phone: 'phone ',
-        address: ''
+
+class Profile extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            nama: props.navigation.getParam('nama'),
+            no_hp: props.navigation.getParam('no_hp'),
+            foto: props.navigation.getParam('foto'),
+            fotobaru: null,
+            username: props.navigation.getParam('username'),
+            email: props.navigation.getParam('email'),
+        }
+    }
+
+    handleChoosePhoto = () => {
+        const options = {
+            noData: true
+        }
+        ImagePicker.showImagePicker(options, response => {
+            console.warn("response", response.uri);
+            if (response.uri) {
+                this.setState({ fotobaru: response })
+            }
+        })
+    }
+
+    editProfile = () => {
+        if (this.state.fotobaru) {
+            dataFile = new FormData(),
+                dataFile.append('foto',
+                    {
+                        uri: this.state.fotobaru.uri,
+                        type: 'image/jpg',
+                        name: 'terserah'
+                    }
+                ),
+                dataFile.append('email', this.state.email),
+                dataFile.append('username', this.state.username),
+                dataFile.append('nama', this.state.nama),
+                dataFile.append('no', this.state.no_hp)
+            let item = {
+                nama: this.state.nama,
+                no_hp: this.state.no_hp,
+                foto: this.state.fotobaru.uri,
+                username: this.state.username,
+                email: this.state.email,
+                
+            }
+
+            const username = this.state.username
+            this.props.dispatch(updateUserPembeli(username, dataFile))
+            this.props.navigation.navigate('ProfileBuyer', item)
+                
+        } else {
+            dataFile = new FormData(),
+                dataFile.append('foto',
+                    {
+                        uri: this.state.foto,
+                        type: 'image/jpg',
+                        name: 'terserah'
+                    }
+                ),
+                dataFile.append('email', this.state.email),
+                dataFile.append('username', this.state.username),
+                dataFile.append('nama', this.state.nama),
+                dataFile.append('no', this.state.no_hp)
+            let item = {
+                nama: this.state.nama,
+                no_hp: this.state.no_hp,
+                foto: this.state.foto,
+                username: this.state.username,
+                email: this.state.email,
+                
+            }
+
+            const username = this.state.username
+            this.props.dispatch(updateUserPembeli(username, dataFile))
+            this.props.navigation.navigate('ProfileBuyer', item)
+                
+            // this.setState({ flag: 'true' })
+        }
     }
 
     render() {
+
+        console.warn('isi state edit', this.state)
+
+        const { foto, nama, no_hp, fotobaru } = this.state
+        // let data = { }
         return (
             <View style={styles.container}>
-                <View style={styles.layPhoto}>
-                    <TouchableOpacity onPress={() => alert('upload foto')}>
-                        <Image style={styles.photo} source={{ uri: 'https://randomuser.me/api/portraits/men/76.jpg' }} />
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity onPress={this.handleChoosePhoto}>
+                    <View style={styles.layPhoto}>
+                        {fotobaru && (<Image style={styles.photo} source={{ uri: fotobaru.uri }} />) ||
+                            foto && (<Image style={styles.photo} source={{ uri: foto }} />)}
+
+                    </View>
+                </TouchableOpacity>
                 <View style={styles.layText}>
-                    <TextInput style={styles.input} placeholder='name' onChangeText={val => this.setState({ 'name': val })} value={this.state.name} />
-                    <TextInput style={styles.input} placeholder='phone number' onChangeText={val => this.setState({ 'phone': val })} value={this.state.phone} />
-                    <TextInput style={styles.input} placeholder='address' onChangeText={val => this.setState({ 'address': val })} value={this.state.address} />
+                    <TextInput style={styles.input} placeholder={nama} onChangeText={val => this.setState({ 'nama': val })} value={this.state.nama} />
+                    <TextInput style={styles.input} placeholder={no_hp} onChangeText={val => this.setState({ 'no_hp': val })} value={this.state.no_hp} />
 
                 </View>
-                <TouchableOpacity style={styles.butEdit} onPress={() => alert('ubah profile')}>
+                <TouchableOpacity style={styles.butEdit} onPress={this.editProfile}>
                     <Text style={styles.textEdit}>Submit Changes</Text>
                 </TouchableOpacity>
 
@@ -30,6 +116,14 @@ export default class Profile extends Component {
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        user: state.dataPembeli
+    }
+}
+
+export default connect(mapStateToProps)(withNavigation(Profile))
 
 const styles = StyleSheet.create({
     input: {
@@ -42,7 +136,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderBottomColor: '#33DDFF',
         borderBottomWidth: 1
-      },
+    },
     container: {
         marginHorizontal: 20
     },

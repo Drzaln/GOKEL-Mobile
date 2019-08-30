@@ -12,6 +12,8 @@ import {
 } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
 import Icon from 'react-native-vector-icons/Ionicons'
+import firebase from 'react-native-firebase'
+import geolocation from '@react-native-community/geolocation';
 import { connect} from 'react-redux'
 import { PostRegisterPembeli } from '../../Public/Redux/Action/User'
 
@@ -25,8 +27,20 @@ class Register extends Component {
       username: '',
       no_hp: '',
       password: '',
-      data: []
+      data: [],
+      latitude: 0,
+      longitude: 0
     }
+  }
+
+   componentDidMount() {
+    // await this.user()
+    this.watchID = geolocation.getCurrentPosition((position) => {
+      this.setState({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+    })
   }
 
   newUserPembeli(data) {
@@ -35,7 +49,11 @@ class Register extends Component {
       spinner: true
     })
     if(email === '' || nama === '' || username === '' || no_hp === '' || password === ''){
-     alert('Lengkapi Form Yang Tersedia!!!')
+      this.setState({
+        spinner: false
+      })
+      alert('Lengkapi Form Yang Tersedia!!!')
+     
     } else {
     this.props.dispatch(PostRegisterPembeli(data))
     .then((Response) => {
@@ -43,8 +61,6 @@ class Register extends Component {
         data: this.props.userBuyer,
         spinner: false
     })
-    console.warn("response", Response)
-    console.warn('error', this.props)
     Alert.alert(
       'Success',
       'Berhasil Registrasi',
@@ -55,16 +71,14 @@ class Register extends Component {
   );
     })
     .catch((error) => {
-      console.warn('error', error)
-      console.warn('error', this.props)
       alert(`Error , Email/Username telah digunakan`)
       this.setState({
-        spinner:false,
         email: '',
         nama:'',
         username: '',
         no_hp: '',
-        password: ''
+        password: '',
+        spinner: false
       })
     })
     
@@ -80,6 +94,7 @@ class Register extends Component {
       no: no_hp,
       password: password
     }
+    
     return (
       <View style={styles.container}>
           <Spinner
@@ -87,8 +102,8 @@ class Register extends Component {
             textContent={'Loading...'}
             textStyle={{ color: '#fff' }}
           />
-        <View style={styles.layRegister}>
           <Text style={styles.Register}>DAFTAR</Text>
+        <ScrollView style={styles.layRegister}>
           <View style={styles.layInput}>
             <View style={{ width: '80%' }}>
             <View style={styles.flexRow}>
@@ -102,6 +117,7 @@ class Register extends Component {
                   onSubmitEditing={() => {
                     this.Username.focus()
                   }}
+                  value={this.state.nama}
                   onChangeText={nama => this.setState({ nama })}
                 />
               </View>
@@ -118,6 +134,7 @@ class Register extends Component {
                   onSubmitEditing={() => {
                     this.Email.focus()
                   }}
+                  value={this.state.username}
                   onChangeText={username => this.setState({ username })}
                 />
               </View>
@@ -134,6 +151,7 @@ class Register extends Component {
                   onSubmitEditing={() => {
                     this.NomorHp.focus()
                   }}
+                  value={this.state.email}
                   onChangeText={email => this.setState({ email })}
                 />
               </View>
@@ -149,6 +167,7 @@ class Register extends Component {
                   onSubmitEditing={() => {
                     this.Password.focus()
                   }}
+                  value={this.state.no_hp}
                   onChangeText={no_hp => this.setState({ no_hp })}
                 />
               </View>
@@ -161,6 +180,7 @@ class Register extends Component {
                   ref={input => {
                     this.Password = input
                   }}
+                  value={this.state.password}
                   onChangeText={password => this.setState({ password })}
                 />
               </View>
@@ -181,11 +201,11 @@ class Register extends Component {
               <Icon size={20} name={'md-arrow-forward'} style={styles.icon} />
             </TouchableOpacity>
           </View>
-        </View>
-        <View style={{marginTop: 30, height:40}}>
+        </ScrollView>
+        <View style={{height:20, marginBottom:10}}>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('Login')}
-          style={{ alignItems: 'flex-end', height: 30, marginTop: '30%', marginRight: '10%'}}
+          style={{ alignItems: 'flex-end', height: 20, marginRight: '10%'}}
           >
             <Text style={styles.Text}>
               Sudah punya akun?
@@ -216,14 +236,15 @@ const styles = StyleSheet.create({
     alignContent: 'center'
   },
   layRegister: {
-    height: '50%',
-    justifyContent: 'center'
+    height: '100%',
+    paddingBottom: 20
   },
   Register: {
     fontFamily: 'Montserrat-Bold',
     textAlign: 'left',
     fontSize: 32,
-    marginBottom: 30,
+    marginTop: '30%',
+    marginBottom: '10%',
     marginLeft: 40,
     color: '#004145'
   },

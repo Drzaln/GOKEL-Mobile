@@ -6,33 +6,106 @@ import {
   StatusBar,
   TextInput,
   TouchableOpacity,
+  AsyncStorage,
   Image
 } from 'react-native'
 import { FAB } from 'react-native-paper'
 import Modal from 'react-native-modal'
+import firebase from 'react-native-firebase'
+import Spinner from 'react-native-loading-spinner-overlay'
+import geolocation from '@react-native-community/geolocation';
+import { connect } from 'react-redux'
+import { getUserPedagang, updateSaldo, updateStock } from '../../../Public/Redux/Action/User'
 
-export class App extends Component {
-  constructor (props) {
+class HomeSeller extends Component {
+  constructor(props) {
     super(props)
     this.state = {
-      harga: '',
-      porsi: '',
-      saldo: 2000,
+      spinner: false,
+      harga: 0,
+      porsi: 0,
+      data: [],
+      dataUser: '',
+      saldo: 0,
       saldoBaru: 0,
-      saldoTampil: 0
+      saldoTampil: 0,
+      foto: '',
+      nama: '',
+      no_hp: '',
+      email: '',
+      username: '',
+      flag: false
     }
   }
 
-  componentDidMount () {
-    const saldoTotal = Number(this.state.saldo) + Number(this.state.saldoBaru)
+  componentWillMount() {
+    this.setState({
+      spinner: true
+    })
+    AsyncStorage.getItem('Username', (err, result) => {
+      if (result) {
+        this.setState({ name: result })
+      }
+      this.props.dispatch(getUserPedagang(this.state.name))
+        .then((result) => {
+          console.warn('data', result.value.data.result[0])
+          this.setState({
+            saldoTampil: result.value.data.result[0].saldo,
+            username: result.value.data.result[0].username
+          })
+          this.setState({
+            data: result.value.data.result,
+            dataUser: result.value.data.result[0],
+            spinner: false,
+            foto: result.value.data.result[0].foto,
+            nama: result.value.data.result[0].nama,
+            no_hp: result.value.data.result[0].no_hp,
+            email: result.value.data.result[0].email,
+            username: result.value.data.result[0].username
+          })
+          this.updateToFirebase()
+        })
 
+    })
+  }
+
+  componentDidMount() {
+    this.getLocation()
+    const saldoTotal = Number(this.state.saldoTampil) + Number(this.state.saldoBaru)
     this.setState({
       saldoTampil: saldoTotal
     })
   }
 
+  getLocation() {
+    this.watchID = geolocation.getCurrentPosition((position) => {
+      this.setState({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+    })
+  }
+
   state = {
     isModalVisible: false
+  }
+
+  updateToFirebase = () => {
+    const { name, dataUser } = this.state
+    console.warn('utuk update', dataUser)
+    firebase.database().ref('/users/' + 'pedagang' + '/' + name).update({
+      idCat: dataUser.id_category,
+      idJajan: dataUser.id_jajan,
+      saldo: dataUser.saldo,
+      stock: dataUser.stok,
+      foto: "http://res.cloudinary.com/ayiangio/image/upload/v1567092668/fehuyhtjksk0qcqxjssa.jpg",
+      harga: dataUser.harga,
+      username: dataUser.username,
+      nama: dataUser.nama,
+      latitude: this.state.latitude,
+      longitude: this.state.longitude
+    })
+
   }
 
   toggleModal = () => {
@@ -58,8 +131,8 @@ export class App extends Component {
   }
 
   submitSaldo = () => {
-    const saldoTotal = Number(this.state.saldo) + Number(this.state.saldoBaru)
-
+    const saldoTotal = Number(this.state.saldoTampil) + Number(this.state.saldoBaru)
+    this.props.dispatch(updateSaldo(this.state.username, saldoTotal))
     this.setState({
       saldo: saldoTotal,
       saldoTampil: saldoTotal,
@@ -67,11 +140,82 @@ export class App extends Component {
     })
   }
 
-  render () {
+  mulaiDagang = () => {
+    const { name, harga, porsi, saldoTampil } = this.state
+    console.warn('utuk update', name)
+    console.warn('utuk harga', harga)
+    console.warn('utuk porsi', porsi)
+    console.warn('utuk saldo', saldoTampil)
+    let data = {
+      stok: porsi,
+      harga: harga
+    }
+    if (saldoTampil <= 5000) {
+      alert("Saldo Tidak Mencukupi. Isi ulang saldo sekarang dengan minimum 5000")
+    } else if(harga === 0){
+      alert('Harap Masukkan Harga Minimal')
+    } else if(porsi === 0){
+      alert('Harap Masukkan Banyaknya Jualan Anda')
+    } else {
+      firebase.database().ref('/users/' + 'pedagang' + '/' + name).update({
+        harga: harga,
+        porsi: porsi,
+      })
+      this.props.dispatch(updateStock(name, data))
+        .then((result) => {
+          console.warn("result", result)
+          this.props.navigation.navigate('MapSeller')
+        })
+        .catch((error) => {
+          console.warn("error", error)
+        })
+
+    }
+  }
+
+  mainValidation = () => {
+    console.warn('flagnya', this.state.flag)
+
+    if (!this.state.flag) {
+      return (
+        this.setState({
+          flag: true
+        })
+      )
+    } else if (this.props.navigation.getParam('foto') || this.props.navigation.getParam('nama') || this.props.navigation.getParam('no_hp')) {
+      console.warn('validation jalan kan')
+      this.validation()
+    }
+  }
+  validation = () => {
+    if (this.state.nama !== this.props.navigation.getParam('nama') || this.state.no_hp !== this.props.navigation.getParam('no_hp') || this.state.foto !== this.props.navigation.getParam('foto')) {
+      this.setState({
+        foto: this.props.navigation.getParam('foto'),
+        nama: this.props.navigation.getParam('nama'),
+        no_hp: this.props.navigation.getParam('no_hp'),
+      })
+    }
+  }
+  render() {
+    const item = {
+      foto: this.state.foto,
+      nama: this.state.nama,
+      no_hp: this.state.no_hp,
+      email: this.state.email,
+      username: this.state.username
+    }
+    console.warn('state ', this.state.nama)
+    console.warn('props ', this.props.navigation.getParam('nama'))
+    this.mainValidation()
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
         <View>
+          <Spinner
+            visible={this.state.spinner}
+            textContent={'Loading...'}
+            textStyle={{ color: '#fff' }}
+          />
           <View
             style={{ padding: 16, backgroundColor: 'white', height: '100%' }}
           >
@@ -82,27 +226,35 @@ export class App extends Component {
               icon='add'
               onPress={() => this.toggleModal()}
             />
-            <View style={styles.viewNama}>
-              <View>
-                <Text style={styles.fontBold}>Halo, Nama</Text>
-                <Text style={styles.fontSaldo}>
-                  Saldo, Rp{' '}
-                  {this.state.saldoTampil === 0 ? 0 : this.state.saldoTampil}
-                </Text>
-              </View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('ProfileBuyer')}
-                >
-                  <Image
-                    source={{
-                      uri: 'https://randomuser.me/api/portraits/men/76.jpg'
-                    }}
-                    style={styles.profil}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
+            {
+              this.state.data.map(item => {
+                console.warn("item", item)
+                return (
+                  <View style={styles.viewNama}>
+                    <View>
+                      <Text style={styles.fontBold}>Halo {item.nama}</Text>
+                      <Text style={styles.fontSaldo}>
+                        Saldo, Rp{' '}
+                        {this.state.saldoTampil === 0 ? 0 : this.state.saldoTampil}
+                      </Text>
+                    </View>
+                    <View>
+
+                      <TouchableOpacity
+                        onPress={() => this.props.navigation.navigate('ProfileSeller', {foto: item.foto,nama:item.nama,email:item.email,no_hp:item.no_hp,saldo:this.state.saldoTampil})}
+                      >
+                        <Image
+                          source={{
+                            uri: `${item.foto}`
+                          }}
+                          style={styles.profil}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )
+              })
+            }
             <View
               style={{ flexDirection: 'row', justifyContent: 'space-around' }}
             >
@@ -116,10 +268,9 @@ export class App extends Component {
                   onChangeText={harga => this.setState({ harga })}
                   returnKeyType={'next'}
                   keyboardType='number-pad'
-                  placeholder='Harga...'
+                  placeholder='Harga Minimal...'
                   placeholderTextColor='grey'
                   clearTextOnFocus
-                  autoFocus
                 />
               </View>
               <View style={styles.textField}>
@@ -142,6 +293,7 @@ export class App extends Component {
               <TouchableOpacity
                 onPress={this.props.suara}
                 rippleColor='rgba(0, 0, 0, .32)'
+                onPress={() => this.mulaiDagang()}
               >
                 <View style={styles.drumGedeLuar}>
                   <View style={styles.drumGedeDalem}>
@@ -177,10 +329,9 @@ export class App extends Component {
                 <Text style={styles.fontSaldo}>Isi Saldo</Text>
                 <View style={styles.fieldSaldo}>
                   <TextInput
-                    autoFocus
                     style={styles.inputText}
                     blurOnSubmit={false}
-                    onChangeText={saldoBaru => this.setState({ saldoBaru }) }
+                    onChangeText={saldoBaru => this.setState({ saldoBaru })}
                     onSubmitEditing={() => this.submitSaldo()}
                     returnKeyType={'done'}
                     keyboardType='number-pad'
@@ -203,7 +354,13 @@ export class App extends Component {
   }
 }
 
-export default App
+const mapStateToProps = state => {
+  return {
+    dataPembeli: state.user.detailPembeli,
+    updateSaldo: state.user.updateSaldo
+  }
+}
+export default connect(mapStateToProps)(HomeSeller)
 
 const styles = StyleSheet.create({
   fontSaldo: {
@@ -216,7 +373,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 32
+    marginBottom: 32,
+    width: '100%'
   },
   profil: {
     width: 80,

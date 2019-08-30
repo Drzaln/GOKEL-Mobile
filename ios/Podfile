@@ -32,6 +32,9 @@ target 'GOKEL' do
 
   pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
 
+  pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
   target 'GOKELTests' do
     inherit! :search_paths
     # Pods for testing

@@ -5,19 +5,101 @@ import {
   StatusBar,
   Image,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
+  AsyncStorage
 } from 'react-native'
 import { FAB } from 'react-native-paper'
 import Modal from 'react-native-modal'
+import firebase from 'react-native-firebase'
+import geolocation from '@react-native-community/geolocation'
+import Icon from 'react-native-vector-icons/Ionicons'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
+import { PostTransaksi } from '../../../Public/Redux/Action/Transaksi'
+import { connect } from 'react-redux'
 
-export class App extends Component {
-  state = {
-    isModalVisible: false
+export class Maps extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      isModalVisible: false,
+      idKategori: this.props.navigation.getParam('idKategori'),
+      users: [],
+      nama: '',
+      username: '',
+      foto: '',
+      porsi: 0,
+      harga: 0
+    }
+  }
+
+  getData = () => {
+    firebase
+      .database()
+      .ref('users/pedagang')
+      .on('child_added', data => {
+        let user = data.val()
+        user.username = data.key
+        if (user.idCat != this.state.idKategori) {
+          this.setState(prevData => {
+            return {
+              users: [...prevData.users, user]
+            }
+          })
+        }
+      })
+  }
+
+  componentDidMount() {
+    this.getData()
+    this.getLocation()
+  }
+
+  getLocation() {
+    this.watchID = geolocation.getCurrentPosition(
+      position => {
+        let region = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: 0.00922 * 1.5,
+          longitudeDelta: 0.00421 * 1.5
+        }
+        this.onRegionChange(region, region.latitude, region.longitude)
+      },
+      error => console.log(error)
+    )
+  }
+
+  onRegionChange(region, lastLat, lastLong) {
+    this.setState({
+      mapRegion: region,
+      // // If there are no new values set the current ones
+      lastLat: lastLat || this.state.lastLat,
+      lastLong: lastLong || this.state.lastLong
+    })
   }
 
   toggleModal = () => {
-    this.setState({ isModalVisible: !this.state.isModalVisible })
+    this.setState({
+      isModalVisible: !this.state.isModalVisible
+    })
+  }
+
+  modalOut = marker => {
+    let region = {
+      latitude: marker.latitude,
+      longitude: marker.longitude,
+      latitudeDelta: 0.00922 * 1,
+      longitudeDelta: 0.00421 * 1
+    }
+    this.setState({
+      isModalVisible: !this.state.isModalVisible,
+      mapRegion: region,
+      nama: marker.nama,
+      username: marker.username,
+      foto: marker.foto,
+      porsi: marker.stock,
+      harga: marker.harga
+    })
   }
 
   handleScrollTo = p => {
@@ -32,7 +114,32 @@ export class App extends Component {
     })
   }
 
-  render () {
+  keBeli = async () => {
+    console.warn(`porrrpppps`, this.props)
+    const dataUsername = await AsyncStorage.getItem('Username')
+    const data = {
+      username_pembeli: dataUsername,
+      username_pedagang: this.state.username
+    }
+    console.warn(this.props);
+    
+    this.props
+      .dispatch(PostTransaksi(data))
+      .then(() => {
+        this.toggleModal()
+        this.props.navigation.navigate('Payment', {
+          username_pembeli: dataUsername,
+          username_pedagang: this.state.username
+        })
+      })
+      .catch(() => {
+        console.warn('meh')
+      })
+  }
+
+  render() {
+    console.warn("users", this.state.users)
+    const { goBack } = this.props.navigation
     return (
       <>
         <StatusBar
@@ -49,20 +156,41 @@ export class App extends Component {
             showsMyLocationButton={false}
             provider={PROVIDER_GOOGLE}
             style={styles.map}
-            initialRegion={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421
-            }}
+            region={this.state.mapRegion}
           >
-            <Marker
-              onPress={() => this.toggleModal()}
-              coordinate={{
-                latitude: 37.78825,
-                longitude: -122.4324
-              }}
-            />
+            {this.state.users.map((marker, index) => {
+              return (
+                <Marker
+                  key={index}
+                  onPress={() => this.modalOut(marker)}
+                  coordinate={{
+                    latitude: marker.latitude,
+                    longitude: marker.longitude
+                  }}
+                >
+                  {
+                     marker.idCat === 1
+                    ?
+                    <Icon size={30} name={'md-pin'} color={'red'} style={styles.icon} />
+                    :
+                    marker.idCat === 2
+                    ?
+                    <Icon size={30} name={'md-pin'} color={'blue'} style={styles.icon} />
+                    :
+                     marker.idCat === 3
+                    ?
+                    <Icon size={30} name={'md-pin'} color={'yellow'} style={styles.icon} />
+                    :
+                    marker.idCat === 4
+                    ?
+                    <Icon size={30} name={'md-pin'} color={'green'} style={styles.icon} />
+                    :
+                    <Icon size={30} name={'md-pin'} style={styles.icon} />
+                  }
+                  
+                </Marker>
+              )
+            })}
           </MapView>
           <Modal
             onSwipeComplete={() => this.toggleModal()}
@@ -72,7 +200,7 @@ export class App extends Component {
             scrollTo={this.handleScrollTo}
             scrollOffset={this.state.scrollOffset}
             scrollOffsetMax={400 - 300}
-            backdropOpacity={0.3}
+            backdropOpacity={0.1}
             style={styles.bottomModal}
           >
             <View style={styles.scrollableModal}>
@@ -82,21 +210,28 @@ export class App extends Component {
                   <View style={{ marginRight: 16 }}>
                     <Image
                       source={{
-                        uri: 'https://randomuser.me/api/portraits/men/76.jpg'
+                        uri: this.state.foto
                       }}
                       style={styles.profil}
                     />
                   </View>
                   <View style={{ flex: 2 }}>
-                    <Text style={styles.fontNama}>Siomay Kang Ujay</Text>
-                    <Text style={styles.fontPorsi}>Sisa ± 30 Porsi </Text>
-                    <Text style={styles.fontHarga}>Rp 5000</Text>
-                    <TouchableOpacity onPress={() => alert('kepencet')}>
+                    <Text style={styles.fontNama}>{this.state.nama}</Text>
+                    <Text style={styles.fontPorsi}>Sisa ± {this.state.porsi} Porsi </Text>
+                    <Text>Minimum Pembelian:</Text>
+                    <Text style={styles.fontHarga}>Rp {this.state.harga}</Text>
+                    <TouchableOpacity onPress={() => this.keBeli()}>
                       <View style={styles.buttonBeli}>
                         <Text style={styles.fontBeli}>BELI</Text>
                       </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => alert('kepencet')}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        this.props.navigation.navigate('Chat', {
+                          username: this.state.username
+                        })
+                      }
+                    >
                       <View style={styles.buttonPesan}>
                         <Text style={styles.fontPesan}>KIRIM PESAN</Text>
                       </View>
@@ -114,14 +249,14 @@ export class App extends Component {
             style={styles.fabBack}
             small
             icon='arrow-back'
-            onPress={() => alert('kepencet')}
+            onPress={() => goBack()}
           />
           <FAB
             small
             color='#00ADB5'
             style={styles.fabLoc}
             icon='my-location'
-            onPress={() => alert('kepencet')}
+            onPress={() => this.getLocation()}
           />
         </View>
       </>
@@ -129,7 +264,16 @@ export class App extends Component {
   }
 }
 
-export default App
+
+
+
+const mapStateToProps = state => {
+  return {
+    transaksi: state.transaksi
+  }
+}
+
+export default connect(mapStateToProps)(Maps)
 
 const styles = StyleSheet.create({
   fabBack: {

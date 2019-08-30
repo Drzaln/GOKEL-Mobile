@@ -30,16 +30,29 @@ export default class Slider extends React.Component {
     constructor() {
         super()
         this.state = {
-            showRealApp: false
+            showRealApp: false,
+            role: ''
         }
-    }
-    componentWillMount() {
-        AsyncStorage.getItem('Token', (error, result) => {
+        AsyncStorage.getItem('Role', (error, result) => {
             if (result) {
-                this.props.navigation.navigate('Home')
+                this.setState({
+                    role: result
+                })
+            }
+        })
+    }
+    
+    componentWillMount() {
+        AsyncStorage.getItem('Role', (error, result) => {
+            console.warn("rolenya", result)
+            if (result === 'pembeli') {
+                this.props.navigation.navigate('HomeBuyer')
+            } else if(result === 'pedagang') {
+                this.props.navigation.navigate('HomeSeller')
             }
         })
       }
+
     _renderItem = ({ item }) => {
         return (
             <View style={styles.container} >

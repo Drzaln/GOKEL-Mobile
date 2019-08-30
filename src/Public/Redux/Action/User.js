@@ -4,7 +4,19 @@ import api from '../../../Config/api'
 export const PostRegisterPembeli = (data) => {
     return {
         type: 'POST_REGIST_PEMBELI',
-        payload: axios.post(`${api}register/pembeli`, data)
+        payload: axios.post(`${api}register/pembeli`, data, {
+            headers: {
+                'chace': 'pembeli',
+                'authorization': 'gokel'
+            }
+        })
+    }
+}
+
+export const PostRegisterPedagang = (data) => {
+    return {
+        type: 'POST_REGIST_PEDAGANG',
+        payload: axios.post(`${api}register/pedagang`, data)
     }
 }
 
@@ -21,3 +33,63 @@ export const getUserPembeli = (username) => {
         payload: axios.get(`${api}pembeli/${username}`)
     }
 }
+
+export const getUserPedagang = (username) => {
+    return {
+        type: 'GET_PEDAGANG',
+        payload: axios.get(`${api}pedagang/${username}`)
+    }
+}
+
+export const getPedagangByCategory = (kategori) => {
+    return{
+        type:'GET_PEDAGANG_KATEGORI',
+        payload: axios.get(`${api}pedagang/kategori/${kategori}`,{
+            headers: {
+                'chace': 'pembeli',
+                'authorization': 'gokel'
+            }
+        })
+    }
+}
+
+export const updateUserPembeli = (username, input) => {
+    return {
+        type: 'PATCH_PEMBELI',
+        payload: axios.patch(`${api}pembeli/${username}`, input)
+    }
+}
+
+export const getJajan = () => {
+    return {
+        type: 'GET_JAJAN',
+        payload: axios.get(`${api}jajan`)
+    }
+}
+
+export const updateSaldo = (username, data) => {
+    return {
+        type: 'PATCH_SALDO',
+        payload: axios.patch(`${api}updatesaldo/${username}`, { saldo: data }, 
+            {
+                headers: {
+                'authorization': 'gokel'
+            }
+        })
+    }
+}
+
+export const updateStock = (username,data) => {
+    return {
+        type: 'PATCH_SALDO',
+        payload: axios.patch(`${api}updatestock/${username}`, data)
+    }
+}
+ 
+export const updateUserPedagang = (username, input) => {
+    return {
+        type: 'PATCH_PEDAGANG',
+        payload: axios.patch(`${api}pedagang/${username}`, input)
+    }
+}
+

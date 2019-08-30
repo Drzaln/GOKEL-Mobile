@@ -1,62 +1,132 @@
 import React, { Component } from 'react'
 import {
-  SafeAreaView,
   StyleSheet,
   ScrollView,
   View,
   Text,
   TextInput,
   StatusBar,
+  Alert,
   AsyncStorage,
   TouchableOpacity
 } from 'react-native'
 import Spinner from 'react-native-loading-spinner-overlay'
+import firebase from 'react-native-firebase'
+import geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/Ionicons'
-import { connect} from 'react-redux'
-import {PostLogin } from '../../Public/Redux/Action/User'
+import { connect } from 'react-redux'
+import { PostLogin } from '../../Public/Redux/Action/User'
 
 class Login extends Component {
-  constructor(){
+  constructor() {
     super()
     this.state = {
       spinner: false,
+      role: '',
       username: '',
       password: '',
+      latitude: 0,
+      longitude: 0,
       data: []
     }
   }
 
-  isLogin = async () => {
-    const { username, password } = this.state
-    if ( username !== '' && password !== '') {
-        let data = {
-            username: username,
-            password: password
-        }
-        await this.props.dispatch(PostLogin(data))
-        .then((result) => {
-          alert('Berhasil Login, Selamat Datang '+ result.value.data.result.username)
-          this.props.navigation.navigate('Home')
+  componentWillMount() {
+    AsyncStorage.getItem('Role', (error, result) => {
+      console.warn("rolenya", result)
+      if (result === 'pembeli') {
+        this.setState({
+          role: result
         })
-        .catch((error)=>{
-          alert("Username & Password tidak cocok",error)
+        this.props.navigation.navigate('HomeBuyer')
+      } else if (result === 'pedagang') {
+        this.setState({
+          role: result
+        })
+        this.props.navigation.navigate('HomeSeller')
+      }
+    })
+  }
+
+  componentDidMount() {
+    // await this.user()
+    this.watchID = geolocation.getCurrentPosition((position) => {
+      this.setState({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+    })
+  }
+
+  checkRole= async() => {
+    const { role } = this.state
+    if (role === 'pembeli') {
+      this.props.navigation.navigate('HomeBuyer')
+    } else if (role === 'pedagang') {
+      this.props.navigation.navigate('HomeSeller')
+    } else {
+      alert("ada kesalah!!! Hubungi penyedia layanan")
+    }
+  }
+
+  isLogin = async (data) => {
+    const { username, password } = this.state
+    this.setState({
+      spinner: true
+    })
+    if (username !== '' && password !== '') {
+      await this.props.dispatch(PostLogin(data))
+        .then((result) => {
+          console.warn("nama", result.value.data.result.username)
+          let namauser = result.value.data.result.username
+          this.setState({
+            username: namauser,
+            spinner: false
+          })
+          Alert.alert(
+            'Success',
+            'Berhasil Login, Selamat Datang ' + namauser,
+            [
+              { text: 'OK', onPress: () => this.checkRole() },
+            ],
+            { cancelable: false },
+          );
+          let role = result.value.data.result.role
+          this.setState({
+            role: role,
+            spinner: false
+          })
+
+        })
+        .catch((error) => {
+          alert("Username & Password tidak cocok", error)
+          this.setState({
+            username: '',
+            password: '',
+            spinner: false
+          })
         })
     } else {
-        alert('Warning, please insert Data in form')
+      alert('Warning, please insert Data in form')
+      this.setState({
+        spinner: false
+      })
     }
-}
+  }
 
-componentWillMount() {
-  AsyncStorage.getItem('Token', (error, result) => {
-      if (result) {
-          this.props.navigation.navigate('Home')
-      }
-  })
-}
-
-  render () {
+  render() {
+    const { username, password } = this.state
+    let data = {
+      username: username,
+      password: password
+    }
     return (
       <View style={styles.container}>
+        <Spinner
+          visible={this.state.spinner}
+          textContent={'Loading...'}
+          textStyle={{ color: '#fff' }}
+        />
         <View style={styles.layLogin}>
           <Text style={styles.Login}>Log In</Text>
           <View style={styles.layInput}>
@@ -72,6 +142,7 @@ componentWillMount() {
                   onSubmitEditing={() => {
                     this.secondTextInput.focus()
                   }}
+                  value={this.state.username}
                   onChangeText={username => this.setState({ username })}
                 />
               </View>
@@ -84,6 +155,7 @@ componentWillMount() {
                   ref={input => {
                     this.secondTextInput = input
                   }}
+                  value={this.state.password}
                   onChangeText={password => this.setState({ password })}
                 />
               </View>
@@ -98,25 +170,25 @@ componentWillMount() {
           >
             <TouchableOpacity
               style={styles.butLogIn}
-              onPress={() => this.isLogin()}
+              onPress={() => this.isLogin(data)}
             >
               <Text style={styles.textLogIn}>Log In</Text>
               <Icon size={20} name={'md-arrow-forward'} style={styles.icon} />
             </TouchableOpacity>
           </View>
         </View>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('ChooseRole')}
-            style={{alignItems: 'flex-end', marginTop: '10%', marginRight: '10%'}}
-          >
-            <Text style={styles.Text}>
-              Tidak punya akun?
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate('ChooseRole')}
+          style={{ alignItems: 'flex-end', marginTop: '10%', marginRight: '10%' }}
+        >
+          <Text style={styles.Text}>
+            Tidak punya akun?
               <Text style={{ fontWeight: 'bold', color: '#00C7D1' }}>
-                {' '}
-                Daftar disini
+              {' '}
+              Daftar disini
               </Text>
-            </Text>
-          </TouchableOpacity>
+          </Text>
+        </TouchableOpacity>
       </View>
     )
   }
@@ -124,7 +196,7 @@ componentWillMount() {
 
 const mapStateToProps = state => {
   return {
-      data: state.user
+    data: state.user
   }
 }
 export default connect(mapStateToProps)(Login)
