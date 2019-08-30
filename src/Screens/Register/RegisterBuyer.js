@@ -49,7 +49,11 @@ class Register extends Component {
       spinner: true
     })
     if(email === '' || nama === '' || username === '' || no_hp === '' || password === ''){
-     alert('Lengkapi Form Yang Tersedia!!!')
+      this.setState({
+        spinner: false
+      })
+      alert('Lengkapi Form Yang Tersedia!!!')
+     
     } else {
     this.props.dispatch(PostRegisterPembeli(data))
     .then((Response) => {

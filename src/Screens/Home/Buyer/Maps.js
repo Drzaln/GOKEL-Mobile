@@ -167,19 +167,19 @@ export class Maps extends Component {
                   }}
                 >
                   {
-                    this.state.idKategori === 1 || marker.idCat === 1
+                     marker.idCat === 1
                     ?
                     <Icon size={30} name={'md-pin'} color={'red'} style={styles.icon} />
                     :
-                    this.state.idKategori === 2 || marker.idCat === 2
+                    marker.idCat === 2
                     ?
                     <Icon size={30} name={'md-pin'} color={'blue'} style={styles.icon} />
                     :
-                    this.state.idKategori === 3 || marker.idCat === 3
+                     marker.idCat === 3
                     ?
                     <Icon size={30} name={'md-pin'} color={'yellow'} style={styles.icon} />
                     :
-                    this.state.idKategori === 4 || marker.idCat === 4
+                    marker.idCat === 4
                     ?
                     <Icon size={30} name={'md-pin'} color={'green'} style={styles.icon} />
                     :

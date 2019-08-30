@@ -29,7 +29,12 @@ class HomeSeller extends Component {
       saldo: 0,
       saldoBaru: 0,
       saldoTampil: 0,
+      foto: '',
+      nama: '',
+      no_hp: '',
+      email: '',
       username: '',
+      flag: false
     }
   }
 
@@ -51,7 +56,12 @@ class HomeSeller extends Component {
           this.setState({
             data: result.value.data.result,
             dataUser: result.value.data.result[0],
-            spinner: false
+            spinner: false,
+            foto: result.value.data.result[0].foto,
+            nama: result.value.data.result[0].nama,
+            no_hp: result.value.data.result[0].no_hp,
+            email: result.value.data.result[0].email,
+            username: result.value.data.result[0].username
           })
           this.updateToFirebase()
         })
@@ -163,7 +173,40 @@ class HomeSeller extends Component {
     }
   }
 
+  mainValidation = () => {
+    console.warn('flagnya', this.state.flag)
+
+    if (!this.state.flag) {
+      return (
+        this.setState({
+          flag: true
+        })
+      )
+    } else if (this.props.navigation.getParam('foto') || this.props.navigation.getParam('nama') || this.props.navigation.getParam('no_hp')) {
+      console.warn('validation jalan kan')
+      this.validation()
+    }
+  }
+  validation = () => {
+    if (this.state.nama !== this.props.navigation.getParam('nama') || this.state.no_hp !== this.props.navigation.getParam('no_hp') || this.state.foto !== this.props.navigation.getParam('foto')) {
+      this.setState({
+        foto: this.props.navigation.getParam('foto'),
+        nama: this.props.navigation.getParam('nama'),
+        no_hp: this.props.navigation.getParam('no_hp'),
+      })
+    }
+  }
   render() {
+    const item = {
+      foto: this.state.foto,
+      nama: this.state.nama,
+      no_hp: this.state.no_hp,
+      email: this.state.email,
+      username: this.state.username
+    }
+    console.warn('state ', this.state.nama)
+    console.warn('props ', this.props.navigation.getParam('nama'))
+    this.mainValidation()
     return (
       <>
         <StatusBar backgroundColor='white' barStyle='dark-content' />
@@ -183,35 +226,30 @@ class HomeSeller extends Component {
               icon='add'
               onPress={() => this.toggleModal()}
             />
-            {
-              this.state.data.map(item => {
-                console.warn("item", item)
-                return (
-                  <View style={styles.viewNama}>
-                    <View>
-                      <Text style={styles.fontBold}>Halo, {item.nama}</Text>
-                      <Text style={styles.fontSaldo}>
-                        Saldo, Rp{' '}
-                        {this.state.saldoTampil === 0 ? 0 : this.state.saldoTampil}
-                      </Text>
-                    </View>
-                    <View>
 
-                      <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('ProfileSeller', item)}
-                      >
-                        <Image
-                          source={{
-                            uri: `${item.foto}`
-                          }}
-                          style={styles.profil}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                )
-              })
-            }
+            <View style={styles.viewNama}>
+              <View>
+                <Text style={styles.fontBold}>Halo, {item.nama}</Text>
+                <Text style={styles.fontSaldo}>
+                  Saldo, Rp{' '}
+                  {this.state.saldoTampil === 0 ? 0 : this.state.saldoTampil}
+                </Text>
+              </View>
+              <View>
+
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.navigate('ProfileSeller', item)}
+                >
+                  <Image
+                    source={{
+                      uri: `${item.foto}`
+                    }}
+                    style={styles.profil}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
             <View
               style={{ flexDirection: 'row', justifyContent: 'space-around' }}
             >
@@ -286,7 +324,6 @@ class HomeSeller extends Component {
                 <Text style={styles.fontSaldo}>Isi Saldo</Text>
                 <View style={styles.fieldSaldo}>
                   <TextInput
-                    autoFocus
                     style={styles.inputText}
                     blurOnSubmit={false}
                     onChangeText={saldoBaru => this.setState({ saldoBaru })}

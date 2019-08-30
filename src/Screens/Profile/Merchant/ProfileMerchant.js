@@ -28,6 +28,19 @@ class ProfileMerchant extends Component {
             harga: props.navigation.getParam('harga'),
             username: props.navigation.getParam('username')
         }
+        
+    }
+
+    // componentDidMount()
+
+    validation = () => {
+        if (this.state.nama !== this.props.navigation.getParam('nama') || this.state.no_hp !== this.props.navigation.getParam('no_hp') || this.state.foto !== this.props.navigation.getParam('foto')) {
+            this.setState({
+                foto: this.props.navigation.getParam('foto'),
+                nama: this.props.navigation.getParam('nama'),
+                no_hp: this.props.navigation.getParam('no_hp'),
+            })
+        }
     }
 
     _menu = null
@@ -59,7 +72,11 @@ class ProfileMerchant extends Component {
     }
 
     render() {
-        const { goBack } = this.props.navigation
+        console.warn('state ',this.state.nama)
+        console.warn('props ',this.props.navigation.getParam('nama'))
+        this.validation()
+
+        const { goBack } = this.props.navigation;
         const { foto, nama, email, no_hp, username } = this.state
         let data = { foto, nama, email, no_hp, username }
         return (
@@ -67,15 +84,8 @@ class ProfileMerchant extends Component {
                 <StatusBar backgroundColor='#1abc9c' barStyle='dark-content' />
                 <View style={styles.layout}>
                     <View style={{ flexDirection: 'row', width: '100%' }}>
-                        <TouchableOpacity
-                            style={{ marginTop: 20, alignItems: 'flex-start', flex: 1 }}
-                        >
-                            <Icon
-                                size={34}
-                                name={'md-arrow-back'}
-                                onPress={() => goBack()}
-                                style={styles.icon}
-                            />
+                        <TouchableOpacity style={{ marginTop: 20, alignItems: 'flex-start', flex: 1 }}>
+                            <Icon size={34} name={'md-arrow-back'} onPress={() => this.props.navigation.navigate('HomeSell', data)} style={styles.icon} />
                         </TouchableOpacity>
                         <View style={{ marginTop: 20, alignItems: 'flex-end', flex: 1 }}>
                             <Menu
@@ -104,20 +114,11 @@ class ProfileMerchant extends Component {
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                        <Image
-                            style={styles.photo}
-                            source={{ uri: `${this.props.navigation.getParam('foto')}` }}
-                        />
+                        <Image style={styles.photo} source={{ uri: `${foto}` }} />
                         <View style={styles.layText}>
-                            <Text style={styles.nameUser}>
-                                {this.props.navigation.getParam('nama')}
-                            </Text>
-                            <Text style={styles.email}>
-                                {this.props.navigation.getParam('email')}
-                            </Text>
-                            <Text style={styles.hp}>
-                                {this.props.navigation.getParam('no_hp')}
-                            </Text>
+                            <Text style={styles.nameUser}>{nama}</Text>
+                            <Text style={styles.email}>{email}</Text>
+                            <Text style={styles.hp}>{no_hp}</Text>
                         </View>
                     </View>
                 </View>
