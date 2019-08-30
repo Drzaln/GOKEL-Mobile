@@ -47,6 +47,8 @@ export class Payment extends Component {
         jumlah: this.state.porsi,
         total_harga: this.state.harga
       }
+      console.warn(this.props);
+      
       this.props.dispatch(UpdateTransaksi(data)).then(() => {
         this.setState({
           spinner: false
@@ -123,9 +125,10 @@ export class Payment extends Component {
     )
   }
 }
+
 const mapStateToProps = state => {
   return {
-    transaksi: state.transaksi
+    detailTransaksi: state.transaksi.detailTransaksi
   }
 }
 

@@ -115,7 +115,7 @@ const transaksi = (state = initialState, action) => {
         isLoading: false,
         isRejected: false,
         isFulfilled: true,
-        detailTransaksi: action.payload.data.result
+        detailTransaksi: action.payload.data
       }
     case 'PATCH_KONFIRMASI_PENDING':
       return {

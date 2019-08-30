@@ -21,14 +21,12 @@ class Home extends Component {
     this.state = {
       name: '',
       dataUser: '',
-      data: [],
-      allCoor: ''
+      data: []
     }
   }
 
   componentDidMount () {
     this.getLocation()
-    this.user()
   }
 
   getLocation () {
@@ -38,27 +36,6 @@ class Home extends Component {
         longitude: position.coords.longitude
       })
     })
-  }
-
-  user = () => {
-    firebase
-      .database()
-      .ref('users/')
-      .on('value', result => {
-        let data = result.val()
-        let buyer = 'pembeli'
-        console.warn('data', data)
-        console.warn('nama', this.state.name)
-        if (data.pembeli === buyer) {
-          buyer = data.pembeli
-        } else {
-          this.setState(prevState => {
-            return {
-              allCoor: [...prevState.allCoor, data.pedagang]
-            }
-          })
-        }
-      })
   }
 
   componentWillMount () {
@@ -85,7 +62,7 @@ class Home extends Component {
       .update({
         username: dataUser.username,
         nama: dataUser.nama,
-        photo: dataUser.foto,
+        foto: dataUser.foto,
         latitude: this.state.latitude,
         longitude: this.state.longitude
       })
@@ -114,8 +91,6 @@ class Home extends Component {
           'https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fkawuloalitox.files.wordpress.com%2F2009%2F10%2Fsate-ayam.png&f=1'
       }
     ]
-    console.warn('alldata', this.state.allCoor)
-    const alldatatoMap = this.state.allCoor
     const list = this.state.data
     // list.push(this.state.name)
     return (
@@ -215,7 +190,7 @@ class Home extends Component {
               <View style={styles.textLihat}>
                 <TouchableOpacity
                   onPress={() =>
-                    this.props.navigation.navigate('MapBuyer', alldatatoMap)
+                    this.props.navigation.navigate('MapBuyer')
                   }
                 >
                   <Text style={styles.textLink}>Lihat semua</Text>
