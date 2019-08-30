@@ -9,7 +9,7 @@
 - [Features](#Features)
 - [Requirements](#Requirements)
 - [Usage](#Usage)
-- [Demo](#Demo)
+- [Screenshot](#Screenshot)
 - [Related Project](#Related-Project)
 - [Contributors](#Contributors)
 
@@ -36,7 +36,7 @@ Gokel App is application for buyer and seller, buyer will get a notification whe
 - Connect your phone to the pc or laptop and make sure your phone is connected with debugging mode
 - Finnaly, type `react-native run-android` and wait for the process to complete
 
-## Demo
+## Screenshoot
 
 <img src="src/images/home.jpeg" width="400px;" alt="X"/>
 
