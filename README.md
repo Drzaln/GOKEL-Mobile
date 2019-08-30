@@ -1,5 +1,5 @@
 <div align=center>
-    <h1>Gokil App</h1>
+    <h1>Gokel App</h1>
 </div>
 
 ## Table of Contents
