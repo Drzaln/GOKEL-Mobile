@@ -1,17 +1,18 @@
 <div align=center>
+<img src="src/images/splash.png" width="200px;" alt="X"/>
     <h1>Gokel App</h1>
 </div>
 
 ## Table of Contents
 
-- [Table of Contents](#Table-of-Contents)
-- [Introduction](#Introduction)
-- [Features](#Features)
-- [Requirements](#Requirements)
-- [Usage](#Usage)
-- [Screenshot](#Screenshoot)
-- [Related Project](#Related-Project)
-- [Contributors](#Contributors)
+- [Table of Contents](#table-of-contents)
+- [Introduction](#introduction)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Usage](#usage)
+- [Screenshoot](#screenshoot)
+- [Related Project](#related-project)
+- [Contributors](#contributors)
 
 ## Introduction
 
