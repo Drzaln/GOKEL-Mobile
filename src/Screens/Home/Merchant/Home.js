@@ -226,30 +226,35 @@ class HomeSeller extends Component {
               icon='add'
               onPress={() => this.toggleModal()}
             />
+            {
+              this.state.data.map(item => {
+                console.warn("item", item)
+                return (
+                  <View style={styles.viewNama}>
+                    <View>
+                      <Text style={styles.fontBold}>Halo {item.nama}</Text>
+                      <Text style={styles.fontSaldo}>
+                        Saldo, Rp{' '}
+                        {this.state.saldoTampil === 0 ? 0 : this.state.saldoTampil}
+                      </Text>
+                    </View>
+                    <View>
 
-            <View style={styles.viewNama}>
-              <View>
-                <Text style={styles.fontBold}>Halo, {item.nama}</Text>
-                <Text style={styles.fontSaldo}>
-                  Saldo, Rp{' '}
-                  {this.state.saldoTampil === 0 ? 0 : this.state.saldoTampil}
-                </Text>
-              </View>
-              <View>
-
-                <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('ProfileSeller', item)}
-                >
-                  <Image
-                    source={{
-                      uri: `${item.foto}`
-                    }}
-                    style={styles.profil}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-
+                      <TouchableOpacity
+                        onPress={() => this.props.navigation.navigate('ProfileSeller', {foto: item.foto,nama:item.nama,email:item.email,no_hp:item.no_hp,saldo:this.state.saldoTampil})}
+                      >
+                        <Image
+                          source={{
+                            uri: `${item.foto}`
+                          }}
+                          style={styles.profil}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )
+              })
+            }
             <View
               style={{ flexDirection: 'row', justifyContent: 'space-around' }}
             >

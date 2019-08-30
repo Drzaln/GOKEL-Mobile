@@ -15,6 +15,8 @@ class ProfileBuyer extends Component {
             email: props.navigation.getParam('email'),
             no_hp: props.navigation.getParam('no_hp'),
             username: props.navigation.getParam('username'),
+            data: []
+
 
         }
     }

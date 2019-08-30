@@ -24,6 +24,18 @@ export const DetailTransaksiPembeli = (username) => {
     }
 }
 
+export const UpdateTransaksi = data => {
+    return {
+        type: 'UPDATE_TRANSAKSI',
+        payload: axios.patch(`${url}update`, data, {
+            headers: {
+                'authorization': 'gokel'
+            }
+        })
+    }
+}
+
+
 export const DetailTransaksiPenjual = (username) => {
     return {
         type: 'GET_TRANSAKSI_PENJUAL',
@@ -35,11 +47,16 @@ export const DetailTransaksiPenjual = (username) => {
     }
 }
 
-export const UpdateTransaksi = (data) => {
-  return {
-      type: 'PATCH_PEMBELI',
-      payload: axios.patch(`${url}update/`,data)
-  }
+
+export const UpdateKonfirmasi = data => {
+    return {
+        type: 'PATCH_KONFIRMASI',
+        payload: axios.patch(`${url}konfirmasi`, data, {
+            headers: {
+                'authorization': 'gokel'
+            }
+        })
+   }  
 }
 
 export const DeleteTransaksi = data => {
