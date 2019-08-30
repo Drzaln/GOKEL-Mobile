@@ -9,7 +9,7 @@
 - [Features](#Features)
 - [Requirements](#Requirements)
 - [Usage](#Usage)
-- [Screenshot](#Screenshot)
+- [Screenshot](#Screenshoot)
 - [Related Project](#Related-Project)
 - [Contributors](#Contributors)
 
