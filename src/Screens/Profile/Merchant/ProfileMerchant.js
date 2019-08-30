@@ -18,6 +18,19 @@ export default class Profile extends Component {
             username: props.navigation.getParam('username')
 
         }
+        
+    }
+
+    // componentDidMount()
+
+    validation = () => {
+        if (this.state.nama !== this.props.navigation.getParam('nama') || this.state.no_hp !== this.props.navigation.getParam('no_hp') || this.state.foto !== this.props.navigation.getParam('foto')) {
+            this.setState({
+                foto: this.props.navigation.getParam('foto'),
+                nama: this.props.navigation.getParam('nama'),
+                no_hp: this.props.navigation.getParam('no_hp'),
+            })
+        }
     }
 
     _menu = null;
@@ -41,6 +54,10 @@ export default class Profile extends Component {
     }
 
     render() {
+        console.warn('state ',this.state.nama)
+        console.warn('props ',this.props.navigation.getParam('nama'))
+        this.validation()
+
         const { goBack } = this.props.navigation;
         const { foto, nama, email, no_hp, username } = this.state
         let data = { foto, nama, email, no_hp, username }
@@ -50,7 +67,7 @@ export default class Profile extends Component {
                 <View style={styles.layout}>
                     <View style={{ flexDirection: 'row', width: '100%' }}>
                         <TouchableOpacity style={{ marginTop: 20, alignItems: 'flex-start', flex: 1 }}>
-                            <Icon size={34} name={'md-arrow-back'} onPress={() => goBack()} style={styles.icon} />
+                            <Icon size={34} name={'md-arrow-back'} onPress={() => this.props.navigation.navigate('HomeSell', data)} style={styles.icon} />
                         </TouchableOpacity>
                         <View style={{ marginTop: 20, alignItems: 'flex-end', flex: 1 }}>
                             <Menu
@@ -63,11 +80,11 @@ export default class Profile extends Component {
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                        <Image style={styles.photo} source={{ uri: `${this.props.navigation.getParam('foto')}` }} />
+                        <Image style={styles.photo} source={{ uri: `${foto}` }} />
                         <View style={styles.layText}>
-                            <Text style={styles.nameUser}>{this.props.navigation.getParam('nama')}</Text>
-                            <Text style={styles.email}>{this.props.navigation.getParam('email')}</Text>
-                            <Text style={styles.hp}>{this.props.navigation.getParam('no_hp')}</Text>
+                            <Text style={styles.nameUser}>{nama}</Text>
+                            <Text style={styles.email}>{email}</Text>
+                            <Text style={styles.hp}>{no_hp}</Text>
                         </View>
                     </View>
                 </View>

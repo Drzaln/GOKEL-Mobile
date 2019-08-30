@@ -16,21 +16,27 @@ import { connect } from 'react-redux'
 import { getUserPembeli } from '../../../Public/Redux/Action/User'
 
 class Home extends Component {
-  constructor () {
+  constructor() {
     super()
     this.state = {
       name: '',
       dataUser: '',
       data: [],
-      allCoor: ''
+      allCoor: '',
+      foto: '',
+      nama: '',
+      no_hp: '',
+      email: '',
+      username: '',
+      flag: false
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.getLocation()
   }
 
-  getLocation () {
+  getLocation() {
     this.watchID = geolocation.getCurrentPosition(position => {
       this.setState({
         latitude: position.coords.latitude,
@@ -60,7 +66,7 @@ class Home extends Component {
       })
   }
 
-  componentWillMount () {
+  componentWillMount() {
     AsyncStorage.getItem('Username', (err, result) => {
       if (result) {
         this.setState({ name: result })
@@ -68,7 +74,12 @@ class Home extends Component {
       this.props.dispatch(getUserPembeli(this.state.name)).then(result => {
         this.setState({
           data: result.value.data.result,
-          dataUser: result.value.data.result[0]
+          dataUser: result.value.data.result[0],
+          foto: result.value.data.result[0].foto,
+          nama: result.value.data.result[0].nama,
+          no_hp: result.value.data.result[0].no_hp,
+          email: result.value.data.result[0].email,
+          username: result.value.data.result[0].username
         })
         this.updateToFirebase()
       })
@@ -90,8 +101,41 @@ class Home extends Component {
       })
   }
 
-  render () {
+  mainValidation = () => {
+    console.warn('flagnya', this.state.flag)
+
+    if (!this.state.flag) {
+      return (
+        this.setState({
+          flag: true
+        })
+      )
+    } else if (this.props.navigation.getParam('foto') || this.props.navigation.getParam('nama') || this.props.navigation.getParam('no_hp')) {
+      console.warn('validation jalan kan')
+      this.validation()
+    }
+  }
+  validation = () => {
+    if (this.state.nama !== this.props.navigation.getParam('nama') || this.state.no_hp !== this.props.navigation.getParam('no_hp') || this.state.foto !== this.props.navigation.getParam('foto')) {
+      this.setState({
+        foto: this.props.navigation.getParam('foto'),
+        nama: this.props.navigation.getParam('nama'),
+        no_hp: this.props.navigation.getParam('no_hp'),
+      })
+    }
+  }
+
+  render() {
     console.warn(this.state.data)
+    const itemData = {
+      foto: this.state.foto,
+      nama: this.state.nama,
+      no_hp: this.state.no_hp,
+      email: this.state.email,
+      username: this.state.username
+    }
+    this.mainValidation()
+
 
     const items = [
       { name: 'SAYUR', code: '#1abc9c', id: 4 },
@@ -115,7 +159,7 @@ class Home extends Component {
     ]
     console.warn('alldata', this.state.allCoor)
     const alldatatoMap = this.state.allCoor
-    const list = this.state.data
+    // const list = this.state.data
     // list.push(this.state.name)
     return (
       <>
@@ -124,27 +168,24 @@ class Home extends Component {
           <View style={styles.background}>
             <View style={styles.viewNama}>
               <View>
-                <Text style={styles.fontBold}>Halo, {this.state.name}</Text>
+                <Text style={styles.fontBold}>Halo, {itemData.nama}</Text>
               </View>
               <View>
-                {list.map((item, index) => {
-                  console.warn('item', item)
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() =>
-                        this.props.navigation.navigate('ProfileBuyer', item)
-                      }
-                    >
-                      <Image
-                        source={{
-                          uri: `${item.foto}`
-                        }}
-                        style={styles.profil}
-                      />
-                    </TouchableOpacity>
-                  )
-                })}
+
+                <TouchableOpacity
+                  
+                  onPress={() =>
+                    this.props.navigation.navigate('ProfileBuyer', itemData)
+                  }
+                >
+                  <Image
+                    source={{
+                      uri: `${itemData.foto}`
+                    }}
+                    style={styles.profil}
+                  />
+                </TouchableOpacity>
+
               </View>
             </View>
           </View>

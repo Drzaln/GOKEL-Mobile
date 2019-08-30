@@ -2,14 +2,11 @@ import React, { Component } from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity, AsyncStorage, StatusBar } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import Menu, { MenuItem } from 'react-native-material-menu';
-import Spinner from 'react-native-loading-spinner-overlay'
-
 
 export default class Profile extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            spinner: false,
             foto: props.navigation.getParam('foto'),
             nama: props.navigation.getParam('nama'),
             email: props.navigation.getParam('email'),
@@ -38,11 +35,21 @@ export default class Profile extends Component {
         this.props.navigation.navigate('Login')
     }
 
+    validation = () => {
+        if (this.state.nama !== this.props.navigation.getParam('nama') || this.state.no_hp !== this.props.navigation.getParam('no_hp') || this.state.foto !== this.props.navigation.getParam('foto')) {
+            this.setState({
+                foto: this.props.navigation.getParam('foto'),
+                nama: this.props.navigation.getParam('nama'),
+                no_hp: this.props.navigation.getParam('no_hp'),
+            })
+        }
+    }
+
     render() {
 
-        
-        console.warn('nama props', this.props.navigation.getParam('nama'))
-        console.warn('nama state', this.state.nama)
+        console.warn('state ',this.state.nama)
+        console.warn('props ',this.props.navigation.getParam('nama'))
+        this.validation()
 
         const { goBack } = this.props.navigation;
         const { foto, nama, email, no_hp, username } = this.state
@@ -53,7 +60,7 @@ export default class Profile extends Component {
                 <View style={styles.layout}>
                     <View style={{ flexDirection: 'row', width: '100%' }}>
                         <TouchableOpacity style={{ marginTop: 20, alignItems: 'flex-start', flex: 1 }}>
-                            <Icon size={34} name={'md-arrow-back'} onPress={() => goBack()} style={styles.icon} />
+                            <Icon size={34} name={'md-arrow-back'} onPress={() => this.props.navigation.navigate('HomeBuy', data)} style={styles.icon} />
                         </TouchableOpacity>
                         <View style={{ marginTop: 20, alignItems: 'flex-end', flex: 1 }}>
                             <Menu
